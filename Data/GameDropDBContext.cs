@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using GameDrop.Models;
 
-namespace SimpleOnlineShopping.Data
+namespace GameDrop.Data
 {
     public class GameDropDBContext : DbContext
     {

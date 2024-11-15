@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using GameDrop.Models;
+using GameDrop.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
