@@ -1,7 +1,11 @@
+using Microsoft.EntityFrameworkCore;
+using GameDrop.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddDbContext<GameDropDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("GameDropConnectionString")));
 
 var app = builder.Build();
 

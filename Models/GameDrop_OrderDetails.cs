@@ -11,6 +11,5 @@ namespace GameDrop.Models
         public int ProductId { get; set; }
         public int Quantity { get; set; }
         public decimal Total { get; set; }
-        public int OrderStatus { get; set; }
     }
 }
