@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using GameDrop.Models;
 using GameDrop.Data;
 using Microsoft.AspNetCore.Identity;
+using GameDrop.Areas.Identity.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
