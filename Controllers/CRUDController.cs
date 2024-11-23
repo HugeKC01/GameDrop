@@ -13,6 +13,68 @@ namespace GameDrop.Controllers
         {
             _db = db;
         }
+        // GET: Admin
+        public async Task<IActionResult> Index()
+        {
+            var products = await _db.Products.ToListAsync();
+            return View(products);
+        }
+
+
+
+        // GET: Admin/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var products = await _db.Products
+                .FirstOrDefaultAsync(m => m.ProductId == id);
+            if (products == null)
+            {
+                return NotFound();
+            }
+
+            return View(products);
+        }
+
+
+
+        // GET: Admin/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+
+
+        // POST: Admin/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage")] GameDrop_Product products)
+        {
+            if (ModelState.IsValid)
+            {
+                if (products.ProductImage != null && products.ProductImage.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        products.ProductImage.CopyTo(memoryStream);
+                        products.ProductImageData = memoryStream.ToArray();
+                        products.ProductImageType = products.ProductImage.ContentType;
+                    }
+                }
+                _db.Add(products);
+                await _db.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(products);
+        }
+
+
+
         // GET: Admin/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
