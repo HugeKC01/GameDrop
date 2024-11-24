@@ -2,9 +2,11 @@
 using GameDrop.Data;
 using Microsoft.EntityFrameworkCore;
 using GameDrop.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameDrop.Controllers
 {
+    [Authorize]
     public class ProductController : Controller
     {
         private readonly GameDropDBContext _db;
