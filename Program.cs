@@ -13,8 +13,8 @@ builder.Services.AddDbContext<GameDropContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GameDropConnectionString")));
 
 builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddEntityFrameworkStores<GameDropContext>()
-    .AddRoles<IdentityRole>();
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<GameDropContext>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
