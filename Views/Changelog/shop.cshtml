@@ -1,0 +1,37 @@
+﻿@model IEnumerable<GameDrop.Models.GameDrop_Product>
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    @foreach (var item in Model)
+    {
+        <div class="col">
+            <div class="card h-100">
+                @if (item.ProductImageData != null && item.ProductImageData.Length > 0)
+                {
+                    <img src="data:@item.ProductImageType;base64,@Convert.ToBase64String(item.ProductImageData)"alt="Product Image" style="max-width: 100px; max-height: 300px;" />
+                }
+                <div class="card-body">
+                    <h5 class="card-title">@Html.DisplayFor(modelItem => item.ProductName)</h5>
+                    <p class="card-text">
+                        @Html.DisplayFor(modelItem => item.ProductDescription)
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <small class="text-body-secondary">
+                        @Html.DisplayFor(modelItem => item.ProductPrice) bath
+                    </small>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+@if (TempData["alert"] != null)
+{
+    <script type="text/javascript">
+        alert('@TempData["alert"]');
+    </script>
+}
