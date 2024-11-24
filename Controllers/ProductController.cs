@@ -5,16 +5,16 @@ using GameDrop.Models;
 
 namespace GameDrop.Controllers
 {
-    public class ChangelogController : Controller
+    public class ProductController : Controller
     {
         private readonly GameDropDBContext _db;
 
-        public ChangelogController(GameDropDBContext db)
+        public ProductController(GameDropDBContext db)
         {
             _db = db;
         }
 
-        public async Task<IActionResult> shop()
+        public async Task<IActionResult> Shop()
         {
             var products = await _db.Products.ToListAsync();
             return View(products);
@@ -39,6 +39,7 @@ namespace GameDrop.Controllers
 
             var products = await _db.Products
                 .FirstOrDefaultAsync(m => m.ProductId == id);
+
             if (products == null)
             {
                 return NotFound();

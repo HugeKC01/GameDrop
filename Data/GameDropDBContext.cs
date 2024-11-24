@@ -20,25 +20,5 @@ namespace GameDrop.Data
         public DbSet<GameDrop.Models.GameDrop_Product> Products { get; set; }
         public DbSet<GameDrop.Models.GameDrop_ShoppingCart> ShoppingCarts { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-
-            // Configure relationships and constraints if necessary
-            modelBuilder.Entity<GameDrop_OrderDetails>()
-                .HasOne<GameDrop_Order>()
-                .WithMany()
-                .HasForeignKey(od => od.OrderId);
-
-            modelBuilder.Entity<GameDrop_OrderDetails>()
-                .HasOne<GameDrop_Product>()
-                .WithMany()
-                .HasForeignKey(od => od.ProductId);
-
-            modelBuilder.Entity<GameDrop_Product>()
-                .HasOne<GameDrop_Category>()
-                .WithMany()
-                .HasForeignKey(p => p.CategoryId);
-        }
     }
 }

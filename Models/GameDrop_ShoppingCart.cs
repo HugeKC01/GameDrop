@@ -1,7 +1,10 @@
-﻿namespace GameDrop.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace GameDrop.Models
 {
     public class GameDrop_ShoppingCart
     {
+        [Key]
         public int ShoppingCartId { get; set; }
         public string? ShoppingCartName { get; set; }
         public int ProductId { get; set; }
