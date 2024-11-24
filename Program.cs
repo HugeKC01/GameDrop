@@ -12,7 +12,9 @@ builder.Services.AddDbContext<GameDropDBContext>(options => options.UseSqlServer
 builder.Services.AddDbContext<GameDropContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GameDropConnectionString")));
 
-builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<GameDropContext>();
+builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddEntityFrameworkStores<GameDropContext>()
+    .AddRoles<IdentityRole>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -49,5 +51,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();
