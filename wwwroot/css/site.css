@@ -20,3 +20,18 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.material-symbols-rounded {
+    vertical-align: middle;
+    font-size: 24px;
+}
+
+.svg-inline {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.btn-flex {
+    display: flex;
+    align-items: center;
+}
