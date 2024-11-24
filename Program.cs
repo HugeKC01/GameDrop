@@ -12,7 +12,22 @@ builder.Services.AddDbContext<GameDropDBContext>(options => options.UseSqlServer
 builder.Services.AddDbContext<GameDropContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GameDropConnectionString")));
 
-builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<GameDropContext>();
+builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<GameDropContext>();
+
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    // Password settings.
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 4;
+
+    // User settings.
+    options.User.AllowedUserNameCharacters =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+    options.User.RequireUniqueEmail = false;
+});
 
 var app = builder.Build();
 
