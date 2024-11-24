@@ -25,3 +25,13 @@ body {
     vertical-align: middle;
     font-size: 24px;
 }
+
+.svg-inline {
+    vertical-align: middle;
+    margin-right: 5px;
+}
+
+.btn-flex {
+    display: flex;
+    align-items: center;
+}
