@@ -13,6 +13,13 @@ namespace GameDrop.Controllers
         {
             _db = db;
         }
+
+        public async Task<IActionResult> shop()
+        {
+            var products = await _db.Products.ToListAsync();
+            return View(products);
+        }
+
         // GET: Admin
         public async Task<IActionResult> Index()
         {
