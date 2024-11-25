@@ -13,6 +13,11 @@
             <hr />
             <div asp-validation-summary="All" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
+                <input asp-for="Input.ProfileImage" type="file" class="form-control" autocomplete="off" accept="image/*"/>
+                <label asp-for="Input.ProfileImage">Profile Image</label>
+                <span asp-validation-for="Input.ProfileImage" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
                 <input asp-for="Input.FirstName" class="form-control" autocomplete="firstname" aria-required="true" placeholder="Username" />
                 <label asp-for="Input.FirstName">First Name</label>
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>

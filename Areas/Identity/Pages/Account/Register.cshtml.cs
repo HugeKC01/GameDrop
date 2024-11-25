@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GameDrop.Areas.Identity.Pages.Account
 {
@@ -113,7 +114,14 @@ namespace GameDrop.Areas.Identity.Pages.Account
             [DataType(DataType.Password)]
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+
             public string ConfirmPassword { get; set; }
+
+            [NotMapped]
+            [Display(Name = "Profile Image")]
+            public IFormFile ProfileImage { get; set; }
+            public byte[] ProfileImageData { get; set; }
+            public string ProfileImageType { get; set; }
         }
 
 
@@ -131,6 +139,16 @@ namespace GameDrop.Areas.Identity.Pages.Account
 
             if (ModelState.IsValid)
             {
+                if (Input.ProfileImage != null && Input.ProfileImage.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await Input.ProfileImage.CopyToAsync(memoryStream);
+                        Input.ProfileImageData = memoryStream.ToArray();
+                        Input.ProfileImageType = Input.ProfileImage.ContentType;
+                    }
+                }
+
                 var user = CreateUser();
 
                 await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
@@ -140,6 +158,8 @@ namespace GameDrop.Areas.Identity.Pages.Account
                 user.FirstName = Input.FirstName;
                 user.LastName = Input.LastName;
                 user.PhoneNumber = Input.PhoneNumber;
+                user.ProfileImageData = Input.ProfileImageData;
+                user.ProfileImageType = Input.ProfileImageType;
 
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
