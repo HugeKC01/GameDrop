@@ -51,9 +51,30 @@
                 </div>
             </div>
             <div class="container-fluid">
-                <ul class="navbar-nav flex-grow-1 justify-content-end">
+                <ul class="navbar-nav flex-grow-1 gap-2 justify-content-end">
+                    <li>
+                        <form asp-controller="Search" asp-action="Index">
+                            <div class="search-bar">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search..." aria-label="Search">
+                                    <button class="btn btn-outline-secondary" type="submit">
+                                        <span class="material-symbols-rounded">
+                                            search
+                                        </span>
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </li>
                     <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="material-symbols-rounded">
+                                shopping_cart
+                            </span>
+                        </button>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             More
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end acrylic">
