@@ -23,7 +23,7 @@ body {
 
 .material-symbols-rounded {
     vertical-align: middle;
-    font-size: 24px;
+    font-size: 1.2em; /* Adjust the size as needed */
 }
 
 .svg-inline {
@@ -44,7 +44,6 @@ body {
 .acrylic {
     position: relative;
     overflow: hidden;
-    margin: 1em;
 }
 
 .acrylic::before {
