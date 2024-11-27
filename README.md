@@ -31,7 +31,7 @@ Our final project of CMM349 Web Application Development in King Mongkut’s Univ
 - ❎ Checkout Page
 - ❎ Payment Page
 - ❎ User Profile
-...More to be added
+<br>...More to be added
 
 <br>
 <br>
