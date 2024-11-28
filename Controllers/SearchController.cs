@@ -13,12 +13,31 @@ namespace GameDrop.Controllers
             _db = db;
         }
 
-        public IActionResult Index(string SearchItem, string sortOrder)
+        public IActionResult Index(string SearchItem, string sortOrder, decimal? minPrice, decimal? maxPrice, int? categoryId)
         {
             var products = _db.Products.AsQueryable();
 
             ViewBag.CurrentSort = sortOrder;
             ViewBag.CurrentSearch = SearchItem;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.CategoryId = categoryId;
+            ViewBag.Categories = _db.Categories.ToList();
+
+            if (minPrice.HasValue)
+            {
+                products = products.Where(p => p.ProductPrice >= minPrice.Value);
+            }
+
+            if (maxPrice.HasValue)
+            {
+                products = products.Where(p => p.ProductPrice <= maxPrice.Value);
+            }
+
+            if (categoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == categoryId.Value);
+            }
 
             if (!string.IsNullOrEmpty(SearchItem))
             {
