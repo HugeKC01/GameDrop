@@ -46,6 +46,20 @@ namespace GameDrop.Controllers
                     (ProductSearch.ProductName != null && ProductSearch.ProductName.Contains(SearchItem)) ||
                     (ProductSearch.ProductDescription != null && ProductSearch.ProductDescription.Contains(SearchItem))
                 );
+                ViewData["Title"] = "Search Results";
+            }
+            else
+            {
+                if (categoryId.HasValue)
+                {
+                    products = products.Where(p => p.CategoryId == categoryId.Value);
+                    var category = _db.Categories.FirstOrDefault(c => c.CategoryId == categoryId.Value);
+                    ViewData["Title"] = category != null ? category.CategoryName : "Search List";
+                }
+                else
+                {
+                    ViewData["Title"] = "All Products";
+                }
             }
 
             products = sortOrder switch

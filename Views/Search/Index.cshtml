@@ -3,7 +3,6 @@
 @model IEnumerable<GameDrop.Models.GameDrop_Product>
 
 @{
-    ViewData["Title"] = "Search List";
     var currentSearch = ViewBag.CurrentSearch as string;
     var currentSort = ViewBag.CurrentSort as string;
     var nameSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "name" : "";
@@ -14,8 +13,6 @@
     var maxPrice = ViewBag.MaxPrice as decimal?;
     var categoryId = ViewBag.CategoryId as int?;
 }
-
-
 
 <ul class="nav justify-content-lg-end">
     <li class="nav-item dropdown">
