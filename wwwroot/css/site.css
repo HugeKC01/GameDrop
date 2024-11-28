@@ -42,6 +42,10 @@ body {
     align-items: center;
 }
 
+.navbar {
+    margin-bottom:1.4em;
+}
+
 .navbar-toggler {
     border: none;
     border-color: transparent;
@@ -120,4 +124,15 @@ body {
 .fullscreen-overlay.show {
     visibility: visible;
     opacity: 1;
+}
+
+.fullscreen-overlay .close-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
 }

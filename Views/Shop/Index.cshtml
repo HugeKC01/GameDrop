@@ -1,17 +1,25 @@
 ﻿@model IEnumerable<GameDrop.Models.GameDrop_Product>
 
+@functions {
+    public string Truncate(string value, int maxChars)
+    {
+        return value.Length <= maxChars ? value : value.Substring(0, maxChars) + "...";
+    }
+}
+
+
 <div class="container my-4">
     <h1 class="text-center mb-4">@ViewData["Title"]</h1>
 
-    <div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
         @foreach (var item in Model)
         {
             <div class="col" style="width:fit-content">
                 <a asp-action="Details" asp-route-id="@item.ProductId.ToString()" class="text-decoration-none">
-                    <div class="card h-100 shadow-sm" style="width: 10rem;">
+                    <div class="card h-100 shadow-sm" style="width: 12rem;">
                         @if (item.ProductImageData != null && item.ProductImageData.Length > 0)
                         {
-                            <img src="data:@item.ProductImageType;base64,@Convert.ToBase64String(item.ProductImageData)" alt="Product Image" class="card-img-top" style="object-fit: cover; max-width: 10rem; max-height: 10rem;" />
+                            <img src="data:@item.ProductImageType;base64,@Convert.ToBase64String(item.ProductImageData)" alt="Product Image" class="card-img-top" style="object-fit: cover; max-width: 12rem; max-height: 12rem;" />
                         }
                         else
                         {
@@ -20,12 +28,12 @@
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.ProductName)</h5>
                             <p class="card-text text-muted">
-                                @Html.DisplayFor(modelItem => item.ProductDescription)
+                                @Truncate(item.ProductDescription, 100)
                             </p>
                         </div>
 
                         <div class="card-footer d-flex justify-content-between align-items-center">
-                            <span class="text-success fw-bold">
+                            <span class="fw-bold">
                                 ฿ @Html.DisplayFor(modelItem => item.ProductPrice)
                             </span>
                             <span class="btn btn-sm btn-primary">

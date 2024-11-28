@@ -1,31 +1,26 @@
 ﻿@model IEnumerable<GameDrop.Models.GameDrop_Product>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Search List";
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var nameSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "name" : "";
+    var namedesSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "name_desc" : "";
+    var priceSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "price" : "";
+    var pricedesSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "price_desc" : "";
 }
 
-<ul class="nav">
-    <li class="nav-item">
-        <a class="nav-link active" aria-current="page" href="#">Active</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link disabled" aria-disabled="true">Disabled</a>
-    </li>
+<ul class="nav justify-content-lg-end">
     <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Filter</a>
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Sort by</a>
         <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Separated link</a></li>
+            <li><a class="dropdown-item" asp-route-sortOrder="@nameSortParam" asp-route-SearchItem="@currentSearch">Name (A to Z)</a></li>
+            <li><a class="dropdown-item" asp-route-sortOrder="@namedesSortParam" asp-route-SearchItem="@currentSearch">Name (Z to A)</a></li>
+            <li><a class="dropdown-item" asp-route-sortOrder="@priceSortParam" asp-route-SearchItem="@currentSearch">Price (Low to High)</a></li>
+            <li><a class="dropdown-item" asp-route-sortOrder="@pricedesSortParam" asp-route-SearchItem="@currentSearch">Price (High to Low)</a></li>
         </ul>
+    </li>
+    <li class="nav-item">
+        <a class="btn" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Filter</a>
     </li>
 </ul>
 

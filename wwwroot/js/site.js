@@ -13,3 +13,15 @@ function hideFullscreenImage() {
     var overlay = document.getElementById('fullscreenOverlay');
     overlay.classList.remove('show');
 }
+
+function incrementQuantity() {
+    var quantityInput = document.getElementById('quantity');
+    quantityInput.value = parseInt(quantityInput.value) + 1;
+}
+
+function decrementQuantity() {
+    var quantityInput = document.getElementById('quantity');
+    if (quantityInput.value > 1) {
+        quantityInput.value = parseInt(quantityInput.value) - 1;
+    }
+}
