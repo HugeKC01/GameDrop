@@ -146,6 +146,11 @@ body {
     background-image: url('/img/background.png');
     background-size: cover;
     background-position: center;
-    filter: blur(10px);
+    filter: blur(20px);
     z-index: -1;
+}
+
+:root {
+    --header-height: 61px; /* Adjust based on your header height */
+    --footer-height: 61px; /* Adjust based on your footer height */
 }

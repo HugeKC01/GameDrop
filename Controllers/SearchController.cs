@@ -46,7 +46,7 @@ namespace GameDrop.Controllers
                     (ProductSearch.ProductName != null && ProductSearch.ProductName.Contains(SearchItem)) ||
                     (ProductSearch.ProductDescription != null && ProductSearch.ProductDescription.Contains(SearchItem))
                 );
-                ViewData["Title"] = "Search Results";
+                ViewData["Title"] = "Search Results: " + SearchItem;
             }
             else
             {

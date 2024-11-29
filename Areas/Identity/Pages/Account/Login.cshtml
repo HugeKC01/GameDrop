@@ -7,7 +7,7 @@
 
 <div class="background-image"></div>
 
-<div class="d-flex justify-content-center align-items-center vh-100">
+<div class="d-flex justify-content-center align-items-center min-vh-custom">
     <div class="card shadow-sm" style="width: 24rem;">
         <div class="card-body">
             <b><p class="card-title text-center" style="margin:0;">@ViewData["Title"]</p></b>
@@ -48,6 +48,12 @@
         </div>
     </div>
 </div>
+
+<style>
+    .min-vh-custom {
+        min-height: calc(100vh - var(--header-height) - var(--footer-height));
+    }
+</style>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
