@@ -17,7 +17,7 @@ namespace GameDrop.Models
         public IFormFile? ProductImage { get; set; }
         public byte[]? ProductImageData { get; set; }
         public string? ProductImageType { get; set; }
-
+        public int Quantity { get; set; }
         public int CategoryId { get; set; }
 
     }

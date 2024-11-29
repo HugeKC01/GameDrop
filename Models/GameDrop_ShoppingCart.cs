@@ -8,6 +8,6 @@ namespace GameDrop.Models
         public int ShoppingCartId { get; set; }
         public string? ShoppingCartName { get; set; }
         public int ProductId { get; set; }
-        public int Quantity { get; set; }
+        public GameDrop_Product Product { get; set; }
     }
 }

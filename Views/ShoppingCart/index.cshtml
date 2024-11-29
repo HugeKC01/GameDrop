@@ -1,0 +1,58 @@
+@model IEnumerable<GameDrop.Models.GameDrop_ShoppingCart>
+
+    @{
+    ViewData["Title"] = "Shopping Cart";
+    }
+
+    <h1>Shopping Cart</h1>
+
+    @if (!Model.Any())
+{
+    <p>Your shopping cart is empty!</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <td>@item.Product?.ProductName</td>
+                <td>@item.Product?.ProductDescription</td>
+                <td>@item.Product?.ProductPrice.ToString("C")</td>
+                <td>@item.Product?.Quantity</td>
+                <td>@(item.Product?.Quantity * item.Product?.ProductPrice).ToString("C")</td>
+                <td>
+                    <form asp-action="IncreaseQuantity" method="post" style="display:inline;">
+                        <input type="hidden" name="cartItemId" value="@item.ShoppingCartId" />
+                        <button type="submit" class="btn btn-success btn-sm">+</button>
+                    </form>
+                    <form asp-action="DecreaseQuantity" method="post" style="display:inline;">
+                        <input type="hidden" name="cartItemId" value="@item.ShoppingCartId" />
+                        <button type="submit" class="btn btn-danger btn-sm">-</button>
+                    </form>
+                </td>
+            </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th colspan="4" class="text-right">Total:</th>
+                <th>
+                    @Model.Sum(item => item.Product?.Quantity * item.Product?.ProductPrice ?? 0).ToString("C")
+                </th>
+                <th></th>
+            </tr>
+        </tfoot>
+    </table>
+}
