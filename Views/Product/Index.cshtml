@@ -19,6 +19,7 @@
                     <th>@Html.DisplayNameFor(model => model.ProductName)</th>
                     <th>@Html.DisplayNameFor(model => model.ProductDescription)</th>
                     <th>@Html.DisplayNameFor(model => model.ProductPrice)</th>
+                    <th>Quantity</th>
                     <th>Image</th>
                     <th class="text-center">Actions</th>
                 </tr>
@@ -33,6 +34,9 @@
                     </td>
                     <td class="fw-bold text-success">
                         @Html.DisplayFor(modelItem => item.ProductPrice) ฿
+                    </td>
+                    <td class="fw-bold text-center">
+                        @Html.DisplayFor(modelItem => item.Quantity)
                     </td>
                     <td>
                         @if (item.ProductImageData != null && item.ProductImageData.Length > 0)

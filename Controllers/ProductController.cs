@@ -61,7 +61,7 @@ namespace GameDrop.Controllers
         // POST: Admin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage")] GameDrop_Product products)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage,Quantity")] GameDrop_Product products)
         {
             if (ModelState.IsValid)
             {
@@ -104,7 +104,7 @@ namespace GameDrop.Controllers
         // POST: Admin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage")] GameDrop_Product products)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage,Quantity")] GameDrop_Product products)
         {
             if (id != products.ProductId)
             {
