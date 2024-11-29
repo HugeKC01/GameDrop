@@ -1,0 +1,78 @@
+﻿@model IEnumerable<GameDrop.ViewModels.OrderViewModel>
+
+@{
+    ViewData["Title"] = "Orders List";
+}
+
+<h1>Orders List</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Order.OrderDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Order.OrderStatus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Order.OrderAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Order.OrderPhone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().Order.OrderEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().OrderDetails.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().OrderDetails.Quantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.First().OrderDetails.Total)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order.OrderDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order.OrderStatus)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order.OrderAddress)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order.OrderPhone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Order.OrderEmail)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDetails.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDetails.Quantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderDetails.Total)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Order.OrderId" class="btn btn-primary">Edit</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Order.OrderId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    <a asp-action="" class="btn btn-primary"></a>
+</div>
