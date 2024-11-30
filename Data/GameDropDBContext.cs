@@ -20,5 +20,15 @@ namespace GameDrop.Data
         public DbSet<GameDrop.Models.GameDrop_Product> Products { get; set; }
         public DbSet<GameDrop.Models.GameDrop_ShoppingCart> ShoppingCarts { get; set; }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            builder.Entity<GameDrop_Category>()
+                .HasOne(c => c.ParentCategory)
+                .WithMany(c => c.SubCategories)
+                .HasForeignKey(c => c.ParentCategoryId);
+        }
+
     }
 }

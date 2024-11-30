@@ -1,8 +1,16 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using GameDrop.Areas.Identity.Data
+@model dynamic
 
 @inject SignInManager<GameDropUser> SignInManager
 @inject UserManager<GameDropUser> UserManager
+
+@{
+    var user = await UserManager.GetUserAsync(User);
+    var userName = user?.UserName;
+    var profileImageData = user?.ProfileImageData;
+    var profileImageType = user?.ProfileImageType;
+}
 
 <!DOCTYPE html>
 <html lang="en">
@@ -80,16 +88,37 @@
                         </button>
                     </li>
                     <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            More
-                        </button>
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @if (profileImageData != null && profileImageData.Length > 0)
+                                {
+                                    var base64 = Convert.ToBase64String(profileImageData);
+                                    var imgSrc = $"data:{profileImageType};base64,{base64}";
+                                    <img src="@imgSrc" alt="Profile Image" class="rounded-circle" style="width: 25px; overflow:hidden;" />
+                                }
+                                else
+                                {
+                                    <img src="/img/placeholder.jpg" alt="Placeholder Image" class="rounded-circle" style="width: 75px; overflow:hidden;" />
+                                }
+                                @UserManager.GetUserName(User)
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                More
+                            </button>
+                        }
                         <ul class="dropdown-menu dropdown-menu-end">
                             @if (SignInManager.IsSignedIn(User))
                             {
-                                <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a></li>
-                                <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Manage Account</a>
+                                    <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
+                                        <span class="material-symbols-rounded">
+                                            manage_accounts
+                                        </span> Manage Account
+                                    </a>
                                     <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                                         <button id="logout" type="submit" class="dropdown-item">
                                             <span class="material-symbols-rounded">

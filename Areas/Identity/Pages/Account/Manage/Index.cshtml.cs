@@ -56,21 +56,38 @@ namespace GameDrop.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
+            public string FirstName { get; set; }
+            public string LastName { get; set; }
             [Phone]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
+
+            [Display(Name = "Profile Image")]
+            public IFormFile ProfileImage { get; set; }
+            public byte[] ProfileImageData { get; set; }
+            public string ProfileImageType { get; set; }
         }
 
         private async Task LoadAsync(GameDropUser user)
         {
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
+            var FirstName = user.FirstName;
+            var LastName = user.LastName;
+            var ProfileImage = user.ProfileImage;
+            var ProfileImageData = user.ProfileImageData;
+            var ProfileImageType = user.ProfileImageType;
 
             Username = userName;
 
             Input = new InputModel
             {
-                PhoneNumber = phoneNumber
+                PhoneNumber = phoneNumber,
+                FirstName = FirstName,
+                LastName = LastName,
+                ProfileImage = ProfileImage,
+                ProfileImageData = ProfileImageData,
+                ProfileImageType = ProfileImageType
             };
         }
 
@@ -111,9 +128,27 @@ namespace GameDrop.Areas.Identity.Pages.Account.Manage
                 }
             }
 
+            if (Input.ProfileImage != null && Input.ProfileImage.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await Input.ProfileImage.CopyToAsync(memoryStream);
+                    user.ProfileImageData = memoryStream.ToArray();
+                    user.ProfileImageType = Input.ProfileImage.ContentType;
+                }
+                var updateResult = await _userManager.UpdateAsync(user);
+                if (!updateResult.Succeeded)
+                {
+                    StatusMessage = "Unexpected error when trying to set profile image.";
+                    return RedirectToPage();
+                }
+            }
+
             await _signInManager.RefreshSignInAsync(user);
             StatusMessage = "Your profile has been updated";
             return RedirectToPage();
+
+
         }
     }
 }
