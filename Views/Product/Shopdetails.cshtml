@@ -1,0 +1,91 @@
+﻿@model GameDrop.Models.GameDrop_Product
+
+@{
+    ViewData["Title"] = @Html.DisplayFor(Model => Model.ProductName);
+}
+
+<div class="container w-100" style="margin-top:1.4em;">
+    <div class="d-flex align-items-center mb-3">
+        <a asp-action="Index" class="btn me-2" style="margin:0; padding:0; outline:none;">
+            <span class="material-symbols-rounded" style="font-size:1.4em;">
+                arrow_back
+            </span>
+        </a>
+        <a class="btn btn-item-title me-2">
+            <h3 style="font-size:1.4em; margin:0; vertical-align:middle;">@Html.DisplayFor(Model => Model.ProductName)</h3>
+        </a>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-4" style="margin-bottom:20px;">
+            <div class="card">
+                @if (Model.ProductImageData != null && Model.ProductImageData.Length > 0)
+                {
+                    var base64 = Convert.ToBase64String(Model.ProductImageData);
+                    var imgSrc = $"data:{Model.ProductImageType};base64,{base64}";
+                    <img src="@imgSrc" alt="Product Image" class="card-img-top" style="width:100%;" onclick="showFullscreenImage('@imgSrc')" />
+                }
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <div class="card" style="margin-bottom:20px;">
+                <div class="card-header">
+                    Product Details
+                </div>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <b>Description</b>
+                        <br />
+                        @Html.DisplayFor(model => model.ProductDescription)
+                    </li>
+                </ul>
+                <div class="card-footer" style="margin-bottom:10px;">
+                    <li class="list-group-item">
+                        <b>Price</b>
+                        <br />
+                        <h3>฿@Html.DisplayFor(model => model.ProductPrice)</h3>
+                    </li>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <form>
+                        <div class="input-group mb-3">
+                            <button class="btn btn-outline-secondary" type="button" id="button-minus" onclick="decrementQuantity()">-</button>
+                            <input type="number" class="form-control" id="quantity" value="1" min="1" />
+                            <button class="btn btn-outline-secondary" type="button" id="button-plus" onclick="incrementQuantity()">+</button>
+                        </div>
+                        <a class="btn btn-outline-primary">Buy Now</a>
+                        <a class="btn btn-outline-primary">Add to Cart</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="fullscreenOverlay" class="fullscreen-overlay" onclick="hideFullscreenImage()">
+    <button class="close-button" onclick="hideFullscreenImage()">
+        <span class="material-symbols-rounded">
+            close
+        </span>
+    </button>
+    <img id="fullscreenImage" src="" alt="Full Screen Image" />
+    </div>
+
+    <!--get quantity to Order details-->
+    <script>
+        function decrementQuantity() {
+            var quantityInput = document.getElementById('quantity');
+            if (quantityInput.value > 1) {
+                quantityInput.value--;
+            }
+        }
+
+        function incrementQuantity() {
+            var quantityInput = document.getElementById('quantity');
+            quantityInput.value++;
+        }
+    </script>

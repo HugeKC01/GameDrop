@@ -1,145 +1,75 @@
 using Microsoft.AspNetCore.Mvc;
+using GameDrop.Data;
+using Microsoft.EntityFrameworkCore;
 using GameDrop.Models;
-using GameDrop.ViewModels;
-using System.Collections.Generic;
-using System.Linq;
-using GameDrop.Services;
 using Microsoft.AspNetCore.Authorization;
-using System.Threading.Tasks;
 
 namespace GameDrop.Controllers
 {
-    //[Authorize]
+    [Authorize]
     public class OrderController : Controller
     {
-        private static List<GameDrop_Order> orders = new List<GameDrop_Order>();
-        private static List<GameDrop_OrderDetails> orderDetails = new List<GameDrop_OrderDetails>();
-        private readonly DateTimeService _dateTimeService;
+        private readonly GameDropDBContext _db;
 
-        public OrderController(DateTimeService dateTimeService)
+        public OrderController(GameDropDBContext db)
         {
-            _dateTimeService = dateTimeService;
+            _db = db;
         }
-        // GET: Order
-        public IActionResult Index()
-        {
-            var viewModelList = orders.Select(order => new OrderViewModel
-            {
-                Order = order,
-                OrderDetails = orderDetails.FirstOrDefault(od => od.OrderId == order.OrderId)
-            }).ToList();
-            return View(viewModelList);
-        }
-
-        // GET: Order/Create
-        public IActionResult Create()
-        {
-
-            return View();
-        }
-
-        // POST: Order/Create
+        // GET: Order details from the shop page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task <IActionResult> Create(OrderViewModel viewModel)
+        public async Task<IActionResult> Orderdetails(int productId, int quantity)
         {
-            if (ModelState.IsValid)
+            if (quantity <= 0)
             {
-                var currentDateTime = await _dateTimeService.GetCurrentDateTimeAsync();
-                if (viewModel.Order != null)
-                {
-                    viewModel.Order.OrderDate = currentDateTime;
-                    orders.Add(viewModel.Order);
-                }
-
-                if (viewModel.OrderDetails != null)
-                {
-                    orderDetails.Add(viewModel.OrderDetails);
-                }
-                return RedirectToAction(nameof(Index));
+                return BadRequest("Quantity must be greater than zero.");
             }
-            return View(viewModel);
-        }
 
-        // GET: Order/Edit/5
-        public IActionResult Edit(int id)
-        {
-            var order = orders.FirstOrDefault(o => o.OrderId == id);
-            var orderDetail = orderDetails.FirstOrDefault(od => od.OrderId == id);
-            if (order == null || orderDetail == null)
+            var product = await _db.Products.FindAsync(productId);
+            if (product == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new OrderViewModel
+            // Create a new order
+            var order = new GameDrop_Order
             {
-                Order = order,
-                OrderDetails = orderDetail
+                OrderDate = DateTime.Now.ToString("yyyy-MM-dd"),
+                OrderStatus = "Pending",
+                // Add other order details as needed
             };
-            return View(viewModel);
-        }
 
-        // POST: Order/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, OrderViewModel viewModel)
-        {
-            if (id != viewModel.Order.OrderId || id != viewModel.OrderDetails.OrderId)
-            {
-                return NotFound();
-            }
+            _db.Orders.Add(order);
+            await _db.SaveChangesAsync();
 
-            if (ModelState.IsValid)
+            // Create order details
+            var orderDetails = new GameDrop_OrderDetails
             {
-                var order = orders.FirstOrDefault(o => o.OrderId == id);
-                var orderDetail = orderDetails.FirstOrDefault(od => od.OrderId == id);
-                if (order != null && orderDetail != null)
-                {
-                    order.OrderStatus = viewModel.Order.OrderStatus;
-                    order.OrderAddress = viewModel.Order.OrderAddress;
-                    order.OrderPhone = viewModel.Order.OrderPhone;
-                    order.OrderEmail = viewModel.Order.OrderEmail;
-                    orderDetail.ProductId = viewModel.OrderDetails.ProductId;
-                    orderDetail.ProductName = viewModel.OrderDetails.ProductName;
-                    orderDetail.Quantity = viewModel.OrderDetails.Quantity;
-                    orderDetail.Total = viewModel.OrderDetails.Total;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(viewModel);
-        }
-
-        // GET: Order/Delete/5
-        public IActionResult Delete(int id)
-        {
-            var order = orders.FirstOrDefault(o => o.OrderId == id);
-            var orderDetail = orderDetails.FirstOrDefault(od => od.OrderId == id);
-            if (order == null || orderDetail == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = new OrderViewModel
-            {
-                Order = order,
-                OrderDetails = orderDetail
+                OrderId = order.OrderId,
+                ProductId = productId,
+                OrderProductName = product.ProductName,
+                OrderQuantity = quantity,
+                Total = product.ProductPrice * quantity
             };
-            return View(viewModel);
-        }
 
-        // POST: Order/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+            _db.OrderDetails.Add(orderDetails);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("OrderDetails", new { id = order.OrderId });
+        }
+        //POST: Order details from the shop page
+        public IActionResult OrderDetails(int id)
         {
-            var order = orders.FirstOrDefault(o => o.OrderId == id);
-            var orderDetail = orderDetails.FirstOrDefault(od => od.OrderId == id);
-            if (order != null && orderDetail != null)
+            var orderDetails = _db.OrderDetails
+                .Where(od => od.OrderId == id)
+                .ToList();
+
+            if (orderDetails == null)
             {
-                orders.Remove(order);
-                orderDetails.Remove(orderDetail);
+                return NotFound();
             }
-            return RedirectToAction(nameof(Index));
+
+            return View(orderDetails);
         }
     }
 }
