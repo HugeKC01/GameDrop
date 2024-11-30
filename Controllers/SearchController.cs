@@ -1,16 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GameDrop.Data;
 using System.Linq;
+using GameDrop.Services;
 
 namespace GameDrop.Controllers
 {
     public class SearchController : Controller
     {
         private readonly GameDropDBContext _db;
+        private readonly CategoryService _categoryService;
 
-        public SearchController(GameDropDBContext db)
+        public SearchController(GameDropDBContext db, CategoryService categoryService)
         {
             _db = db;
+            _categoryService = categoryService;
         }
 
         public IActionResult Index(string SearchItem, string sortOrder, decimal? minPrice, decimal? maxPrice, int? categoryId)
@@ -21,8 +24,8 @@ namespace GameDrop.Controllers
             ViewBag.CurrentSearch = SearchItem;
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
-            ViewBag.CategoryId = categoryId;
-            ViewBag.Categories = _db.Categories.ToList();
+            ViewBag.Categories = _categoryService.GetCategories();
+            ViewBag.SelectedCategoryId = categoryId;
 
             if (minPrice.HasValue)
             {

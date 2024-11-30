@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameDrop.Migrations
 {
     [DbContext(typeof(GameDropDBContext))]
-    [Migration("20241130171343_AddCategory")]
+    [Migration("20241130183631_AddCategory")]
     partial class AddCategory
     {
         /// <inheritdoc />

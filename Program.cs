@@ -3,6 +3,7 @@ using GameDrop.Models;
 using GameDrop.Data;
 using Microsoft.AspNetCore.Identity;
 using GameDrop.Areas.Identity.Data;
+using GameDrop.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,8 @@ builder.Services.AddDbContext<GameDropContext>(options =>
 builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<GameDropContext>();
+
+builder.Services.AddScoped<CategoryService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

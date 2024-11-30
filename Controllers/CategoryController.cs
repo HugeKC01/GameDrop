@@ -1,164 +1,111 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using GameDrop.Data;
+﻿using Microsoft.AspNetCore.Mvc;
+using GameDrop.Services;
 using GameDrop.Models;
+using GameDrop.ViewModels;
 
 namespace GameDrop.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly GameDropDBContext _context;
+        private readonly CategoryService _categoryService;
 
-        public CategoryController(GameDropDBContext context)
+        public CategoryController(CategoryService categoryService)
         {
-            _context = context;
+            _categoryService = categoryService;
         }
 
-        // GET: Category
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var gameDropDBContext = _context.Categories.Include(g => g.ParentCategory);
-            return View(await gameDropDBContext.ToListAsync());
+            var categories = _categoryService.GetCategories();
+            return View(categories);
         }
 
-        // GET: Category/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var gameDrop_Category = await _context.Categories
-                .Include(g => g.ParentCategory)
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (gameDrop_Category == null)
-            {
-                return NotFound();
-            }
-
-            return View(gameDrop_Category);
-        }
-
-        // GET: Category/Create
         public IActionResult Create()
         {
-            ViewData["ParentCategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId");
-            return View();
+            var model = new CategoryViewModel
+            {
+                Categories = _categoryService.GetCategories()
+            };
+            return View(model);
         }
 
-        // POST: Category/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CategoryId,CategoryName,ParentCategoryId")] GameDrop_Category gameDrop_Category)
+        public IActionResult Create(CategoryViewModel model)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(gameDrop_Category);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var category = new GameDrop_Category
+                {
+                    CategoryName = model.CategoryName,
+                    ParentCategoryId = model.ParentCategoryId
+                };
+                _categoryService.AddCategory(category);
+                return RedirectToAction("Index");
             }
-            ViewData["ParentCategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", gameDrop_Category.ParentCategoryId);
-            return View(gameDrop_Category);
+            model.Categories = _categoryService.GetCategories();
+            return View(model);
         }
 
-        // GET: Category/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null)
+            var category = _categoryService.GetCategoryById(id);
+            if (category == null)
             {
                 return NotFound();
             }
 
-            var gameDrop_Category = await _context.Categories.FindAsync(id);
-            if (gameDrop_Category == null)
+            var model = new CategoryViewModel
             {
-                return NotFound();
-            }
-            ViewData["ParentCategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", gameDrop_Category.ParentCategoryId);
-            return View(gameDrop_Category);
+                CategoryId = category.CategoryId,
+                CategoryName = category.CategoryName,
+                ParentCategoryId = category.ParentCategoryId,
+                Categories = _categoryService.GetCategories()
+            };
+            return View(model);
         }
 
-        // POST: Category/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CategoryId,CategoryName,ParentCategoryId")] GameDrop_Category gameDrop_Category)
+        public IActionResult Edit(CategoryViewModel model)
         {
-            if (id != gameDrop_Category.CategoryId)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
-                try
+                var category = _categoryService.GetCategoryById(model.CategoryId.Value);
+                if (category == null)
                 {
-                    _context.Update(gameDrop_Category);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GameDrop_CategoryExists(gameDrop_Category.CategoryId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+
+                category.CategoryName = model.CategoryName;
+                category.ParentCategoryId = model.ParentCategoryId;
+                _categoryService.UpdateCategory(category);
+                return RedirectToAction("Index");
             }
-            ViewData["ParentCategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryId", gameDrop_Category.ParentCategoryId);
-            return View(gameDrop_Category);
+            model.Categories = _categoryService.GetCategories();
+            return View(model);
         }
 
-        // GET: Category/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null)
+            var category = _categoryService.GetCategoryById(id);
+            if (category == null)
             {
                 return NotFound();
             }
 
-            var gameDrop_Category = await _context.Categories
-                .Include(g => g.ParentCategory)
-                .FirstOrDefaultAsync(m => m.CategoryId == id);
-            if (gameDrop_Category == null)
-            {
-                return NotFound();
-            }
-
-            return View(gameDrop_Category);
+            return View(category);
         }
 
-        // POST: Category/Delete/5
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id)
         {
-            var gameDrop_Category = await _context.Categories.FindAsync(id);
-            if (gameDrop_Category != null)
+            var category = _categoryService.GetCategoryById(id);
+            if (category == null)
             {
-                _context.Categories.Remove(gameDrop_Category);
+                return NotFound();
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool GameDrop_CategoryExists(int id)
-        {
-            return _context.Categories.Any(e => e.CategoryId == id);
+            _categoryService.DeleteCategory(category);
+            return RedirectToAction("Index");
         }
     }
 }

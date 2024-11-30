@@ -16,6 +16,7 @@
 
     var user = await UserManager.GetUserAsync(User);
     var userName = user?.UserName;
+    var name = user?.FirstName + " " + user?.LastName;
     var profileImageData = user?.ProfileImageData;
     var profileImageType = user?.ProfileImageType;
 }
@@ -35,15 +36,14 @@
             }
             <div class="container-fluid m-0">
                 <h3 class="ms-3">Welcome,  @userName</h3>
-                <p class="ms-3 mb-0">You can change your account settings here.</p>
+                <p class="ms-3 mb-0">@name</p>
             </div>
         </div>
     </div>
 </div>
 
-<div>
+<div class="container-fluid">
     <h2>Change your account settings</h2>
-    <hr />
     <partial name="_ManageNav" />
     <div class="row">
         <div class="col-md-9">

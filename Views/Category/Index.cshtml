@@ -1,41 +1,33 @@
-﻿@model IEnumerable<GameDrop.Models.GameDrop_Category>
+﻿@model List<GameDrop.Models.GameDrop_Category>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Manage Categories";
 }
 
-<h1>Index</h1>
+<h3>Categories</h3>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.CategoryName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ParentCategory)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.CategoryName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ParentCategory.CategoryId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.CategoryId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.CategoryId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.CategoryId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<a asp-action="Create" class="btn btn-primary">Create New Category</a>
+
+<ul>
+    @foreach (var category in Model.Where(c => c.ParentCategoryId == null))
+    {
+        <li>
+            @category.CategoryName
+            <a asp-action="Edit" asp-route-id="@category.CategoryId" class="btn btn-sm btn-secondary">Edit</a>
+            <a asp-action="Delete" asp-route-id="@category.CategoryId" class="btn btn-sm btn-danger">Delete</a>
+            @if (category.SubCategories != null && category.SubCategories.Any())
+            {
+                <ul>
+                    @foreach (var subCategory in category.SubCategories)
+                    {
+                        <li>
+                            @subCategory.CategoryName
+                            <a asp-action="Edit" asp-route-id="@subCategory.CategoryId" class="btn btn-sm btn-secondary">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@subCategory.CategoryId" class="btn btn-sm btn-danger">Delete</a>
+                        </li>
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul>

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace GameDrop.Models
 {
@@ -9,12 +10,22 @@ namespace GameDrop.Models
         public int CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public int? ParentCategoryId { get; set; }
-        public GameDrop_Category ParentCategory { get; set; }
-        public ICollection<GameDrop_Category> SubCategories { get; set; }
+        [ForeignKey("ParentCategoryId")]
+        public GameDrop_Category? ParentCategory { get; set; }
+        public ICollection<GameDrop_Category>? SubCategories { get; set; }
 
-        public GameDrop_Category()
+        public List<GameDrop_Category> GetAllSubCategories()
         {
-            SubCategories = new List<GameDrop_Category>();
+            var allSubCategories = new List<GameDrop_Category>();
+            if (SubCategories != null)
+            {
+                foreach (var subCategory in SubCategories)
+                {
+                    allSubCategories.Add(subCategory);
+                    allSubCategories.AddRange(subCategory.GetAllSubCategories());
+                }
+            }
+            return allSubCategories;
         }
     }
 }
