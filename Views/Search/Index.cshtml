@@ -1,0 +1,119 @@
+﻿@using GameDrop.Areas.Identity.Data
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@model IEnumerable<GameDrop.Models.GameDrop_Product>
+
+@{
+    var currentSearch = ViewBag.CurrentSearch as string;
+    var currentSort = ViewBag.CurrentSort as string;
+    var nameSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "name" : "";
+    var namedesSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "name_desc" : "";
+    var priceSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "price" : "";
+    var pricedesSortParam = String.IsNullOrEmpty(ViewBag.CurrentSort) ? "price_desc" : "";
+    var minPrice = ViewBag.MinPrice as decimal?;
+    var maxPrice = ViewBag.MaxPrice as decimal?;
+    var categoryId = ViewBag.CategoryId as int?;
+}
+
+<ul class="nav justify-content-lg-end">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Sort by</a>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" asp-route-sortOrder="@nameSortParam" asp-route-SearchItem="@currentSearch" asp-route-minPrice="@minPrice" asp-route-maxPrice="@maxPrice" asp-route-categoryId="@categoryId">Name (A to Z)</a></li>
+            <li><a class="dropdown-item" asp-route-sortOrder="@namedesSortParam" asp-route-SearchItem="@currentSearch" asp-route-minPrice="@minPrice" asp-route-maxPrice="@maxPrice" asp-route-categoryId="@categoryId">Name (Z to A)</a></li>
+            <li><a class="dropdown-item" asp-route-sortOrder="@priceSortParam" asp-route-SearchItem="@currentSearch" asp-route-minPrice="@minPrice" asp-route-maxPrice="@maxPrice" asp-route-categoryId="@categoryId">Price (Low to High)</a></li>
+            <li><a class="dropdown-item" asp-route-sortOrder="@pricedesSortParam" asp-route-SearchItem="@currentSearch" asp-route-minPrice="@minPrice" asp-route-maxPrice="@maxPrice" asp-route-categoryId="@categoryId">Price (High to Low)</a></li>
+        </ul>
+    </li>
+    <li class="nav-item">
+        <a class="btn" role="button" data-bs-toggle="collapse" data-bs-target="#FilterCollapse" aria-expanded="false" aria-controls="FilterCollapse">Filter</a>
+    </li>
+</ul>
+
+<div class="container-fluid collapse" id="FilterCollapse">
+    <div class="card card-body">
+        <form method="get" asp-action="Index">
+            <input type="hidden" name="sortOrder" value="@currentSort" />
+            <input type="hidden" name="SearchItem" value="@currentSearch" />
+            <div class="row mb-3">
+                <div class="col">
+                    <label for="categoryId" class="form-label">Category</label>
+                    <select class="form-control" id="categoryId" name="categoryId">
+                        @foreach (var category in ViewBag.Categories)
+                        {
+                            <option value="@category.CategoryId" selected="@(category.CategoryId == ViewBag.SelectedCategoryId ? "selected" : "")">@category.CategoryName</option>
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-1">
+                    <label for="minPrice" class="form-label">Price</label>
+                </div>
+            </div>
+            <div class="row mb-3" style="vertical-align:middle;">
+                <div class="col col-sm-4 col-lg-2 d-flex align-items-center">
+                    <input type="number" class="form-control" id="minPrice" name="minPrice" value="@ViewBag.MinPrice" />
+                </div>
+                <div class="col-1 d-flex align-items-center" style="width:fit-content; padding:0;">
+                    <span class="material-symbols-rounded">
+                        check_indeterminate_small
+                    </span>
+                </div>
+                <div class="col col-sm-4 col-lg-2 d-flex align-items-center">
+                    <input type="number" class="form-control" id="maxPrice" name="maxPrice" value="@ViewBag.MaxPrice" />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Apply Filter</button>
+        </form>
+    </div>
+</div>
+
+@functions {
+    public string Truncate(string value, int maxChars)
+    {
+        return value.Length <= maxChars ? value : value.Substring(0, maxChars) + "...";
+    }
+}
+
+
+<div class="container my-4">
+    <h1 class="text-center mb-4">@ViewData["Title"]</h1>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4 justify-content-center">
+        @foreach (var item in Model)
+        {
+            <div class="col" style="width:fit-content">
+                <a asp-action="Details" asp-route-id="@item.ProductId.ToString()" class="text-decoration-none">
+                    <div class="card h-100 shadow-sm" style="width: 12rem;">
+                        @if (item.ProductImageData != null && item.ProductImageData.Length > 0)
+                        {
+                            <img src="data:@item.ProductImageType;base64,@Convert.ToBase64String(item.ProductImageData)" alt="Product Image" class="card-img-top" style="object-fit: cover; max-width: 12rem; max-height: 12rem;" />
+                        }
+                        else
+                        {
+                            <img src="/images/placeholder.png" alt="Placeholder Image" class="card-img-top" style="object-fit: cover; width: 200px; height: 200px;" />
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@Html.DisplayFor(modelItem => item.ProductName)</h5>
+                            <p class="card-text text-muted">
+                                @Truncate(item.ProductDescription, 100)
+                            </p>
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">
+                                ฿ @Html.DisplayFor(modelItem => item.ProductPrice)
+                            </span>
+                            <span class="btn btn-sm btn-primary">
+                                <span class="material-symbols-rounded">
+                                    shopping_cart
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        }
+    </div>
+</div>

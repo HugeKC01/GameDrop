@@ -1,0 +1,33 @@
+﻿@model List<GameDrop.Models.GameDrop_Category>
+
+@{
+    ViewData["Title"] = "Manage Categories";
+}
+
+<h3>Categories</h3>
+
+<a asp-action="Create" class="btn btn-primary">Create New Category</a>
+
+<ul>
+    @foreach (var category in Model.Where(c => c.ParentCategoryId == null))
+    {
+        <li>
+            @category.CategoryName
+            <a asp-action="Edit" asp-route-id="@category.CategoryId" class="btn btn-sm btn-secondary">Edit</a>
+            <a asp-action="Delete" asp-route-id="@category.CategoryId" class="btn btn-sm btn-danger">Delete</a>
+            @if (category.SubCategories != null && category.SubCategories.Any())
+            {
+                <ul>
+                    @foreach (var subCategory in category.SubCategories)
+                    {
+                        <li>
+                            @subCategory.CategoryName
+                            <a asp-action="Edit" asp-route-id="@subCategory.CategoryId" class="btn btn-sm btn-secondary">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@subCategory.CategoryId" class="btn btn-sm btn-danger">Delete</a>
+                        </li>
+                    }
+                </ul>
+            }
+        </li>
+    }
+</ul>

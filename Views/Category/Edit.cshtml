@@ -1,0 +1,29 @@
+﻿@model GameDrop.ViewModels.CategoryViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<h2>Edit Category</h2>
+
+<form asp-action="Edit">
+    <input type="hidden" asp-for="CategoryId" />
+    <div class="form-group">
+        <label asp-for="CategoryName" class="control-label"></label>
+        <input asp-for="CategoryName" class="form-control" />
+        <span asp-validation-for="CategoryName" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="ParentCategoryId" class="control-label"></label>
+        <select asp-for="ParentCategoryId" class="form-control" asp-items="@(new SelectList(Model.Categories, "CategoryId", "CategoryName", Model.ParentCategoryId))">
+            <option value="">-- Select Parent Category --</option>
+        </select>
+        <span asp-validation-for="ParentCategoryId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <input type="submit" value="Save" class="btn btn-primary" />
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

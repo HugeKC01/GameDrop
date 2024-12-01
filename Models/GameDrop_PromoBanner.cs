@@ -10,6 +10,7 @@ namespace GameDrop.Models
         public int PromoBannerId { get; set; }
         public string? PromoBannerName { get; set; }
         public string? PromoBannerDescription { get; set; }
+
         [NotMapped]
         [Display(Name = "BannerImage")]
         public IFormFile? PromoBannerImage { get; set; }

@@ -1,35 +1,80 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GameDrop.Data;
+using System.Linq;
+using GameDrop.Services;
 
 namespace GameDrop.Controllers
 {
     public class SearchController : Controller
     {
         private readonly GameDropDBContext _db;
+        private readonly CategoryService _categoryService;
 
-        public SearchController(GameDropDBContext db)
+        public SearchController(GameDropDBContext db, CategoryService categoryService)
         {
             _db = db;
+            _categoryService = categoryService;
         }
 
-        public IActionResult Index(string SearchItem)
+        public IActionResult Index(string SearchItem, string sortOrder, decimal? minPrice, decimal? maxPrice, int? categoryId)
         {
-            if (string.IsNullOrEmpty(SearchItem))
+            var products = _db.Products.AsQueryable();
+
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.CurrentSearch = SearchItem;
+            ViewBag.MinPrice = minPrice;
+            ViewBag.MaxPrice = maxPrice;
+            ViewBag.Categories = _categoryService.GetCategories();
+            ViewBag.SelectedCategoryId = categoryId;
+
+            if (minPrice.HasValue)
             {
-                return View("Index", _db.Products.ToList());
+                products = products.Where(p => p.ProductPrice >= minPrice.Value);
             }
-            else
+
+            if (maxPrice.HasValue)
             {
-                var searchResults = _db.Products.Where(ProductSearch =>
+                products = products.Where(p => p.ProductPrice <= maxPrice.Value);
+            }
+
+            if (categoryId.HasValue)
+            {
+                products = products.Where(p => p.CategoryId == categoryId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(SearchItem))
+            {
+                products = products.Where(ProductSearch =>
                     ProductSearch.ProductId.ToString().Contains(SearchItem) ||
                     (ProductSearch.ProductName != null && ProductSearch.ProductName.Contains(SearchItem)) ||
                     (ProductSearch.ProductDescription != null && ProductSearch.ProductDescription.Contains(SearchItem))
-                ).ToList();
-
-                return View("Index", searchResults);
+                );
+                ViewData["Title"] = "Search Results: " + SearchItem;
             }
+            else
+            {
+                if (categoryId.HasValue)
+                {
+                    products = products.Where(p => p.CategoryId == categoryId.Value);
+                    var category = _db.Categories.FirstOrDefault(c => c.CategoryId == categoryId.Value);
+                    ViewData["Title"] = category != null ? category.CategoryName : "Search List";
+                }
+                else
+                {
+                    ViewData["Title"] = "All Products";
+                }
+            }
+
+            products = sortOrder switch
+            {
+                "name" => products.OrderBy(p => p.ProductName),
+                "name_desc" => products.OrderByDescending(p => p.ProductName),
+                "price" => products.OrderBy(p => p.ProductPrice),
+                "price_desc" => products.OrderByDescending(p => p.ProductPrice),
+                _ => products.OrderBy(p => p.ProductName),
+            };
+
+            return View("Index", products.ToList());
         }
-
-
     }
 }

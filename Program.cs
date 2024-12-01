@@ -17,8 +17,8 @@ builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.Requ
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<GameDropContext>();
 
-builder.Services.AddHttpClient();   
-builder.Services.AddHttpClient<DateTimeService>(); // Register HttpClient for date time service
+builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<PromoBannerService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {
@@ -57,6 +57,5 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
-app.MapControllers(); // Ensure API controllers are mapped
 
 app.Run();

@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using GameDrop.Areas.Identity.Data;
+@model dynamic
+
+@inject UserManager<GameDropUser> UserManager
+
+@{
+    if (ViewData.TryGetValue("ParentLayout", out var parentLayout) && parentLayout != null)
+    {
+        Layout = parentLayout.ToString();
+    }
+    else
+    {
+        Layout = "/Areas/Identity/Pages/_Layout.cshtml";
+    }
+
+    var user = await UserManager.GetUserAsync(User);
+    var userName = user?.UserName;
+    var name = user?.FirstName + " " + user?.LastName;
+    var profileImageData = user?.ProfileImageData;
+    var profileImageType = user?.ProfileImageType;
+}
+
+<div class="container-fluid mb-3">
+    <div class="card card-body">
+        <div class="d-flex align-items-center">
+            @if (profileImageData != null && profileImageData.Length > 0)
+            {
+                var base64 = Convert.ToBase64String(profileImageData);
+                var imgSrc = $"data:{profileImageType};base64,{base64}";
+                <img src="@imgSrc" alt="Profile Image" class="rounded-circle" style="width: 75px; overflow:hidden;" />
+            }
+            else
+            {
+                <img src="/img/placeholder.jpg" alt="Placeholder Image" class="rounded-circle" style="width: 75px; overflow:hidden;" />
+            }
+            <div class="container-fluid m-0">
+                <h3 class="ms-3">Welcome,  @userName</h3>
+                <p class="ms-3 mb-0">@name</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <h2>Change your account settings</h2>
+    <partial name="_ManageNav" />
+    <div class="row">
+        <div class="col-md-9">
+            @RenderBody()
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @RenderSection("Scripts", required: false)
+}

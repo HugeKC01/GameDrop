@@ -70,6 +70,12 @@ namespace GameDrop.Migrations.GameDrop
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<byte[]>("ProfileImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ProfileImageType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
