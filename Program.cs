@@ -11,7 +11,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<GameDropDBContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("GameDropConnectionString")));
 builder.Services.AddDbContext<GameDropContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("GameDropConnectionString")));
-
+builder.Services.AddScoped<ShoppingCartService>();
 builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<GameDropContext>();
 
 var app = builder.Build();
