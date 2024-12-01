@@ -25,7 +25,7 @@ namespace GameDrop.Controllers
             ViewBag.MinPrice = minPrice;
             ViewBag.MaxPrice = maxPrice;
             ViewBag.Categories = _categoryService.GetCategories();
-            ViewBag.SelectedCategoryId = categoryId;
+            ViewBag.CategoryId = categoryId;
 
             if (minPrice.HasValue)
             {
@@ -55,7 +55,6 @@ namespace GameDrop.Controllers
             {
                 if (categoryId.HasValue)
                 {
-                    products = products.Where(p => p.CategoryId == categoryId.Value);
                     var category = _db.Categories.FirstOrDefault(c => c.CategoryId == categoryId.Value);
                     ViewData["Title"] = category != null ? category.CategoryName : "Search List";
                 }

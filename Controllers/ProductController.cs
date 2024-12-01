@@ -3,6 +3,7 @@ using GameDrop.Data;
 using Microsoft.EntityFrameworkCore;
 using GameDrop.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace GameDrop.Controllers
 {
@@ -16,16 +17,12 @@ namespace GameDrop.Controllers
             _db = db;
         }
 
-        public async Task<IActionResult> Shop()
-        {
-            var products = await _db.Products.ToListAsync();
-            return View(products);
-        }
-
         // GET: Admin
         public async Task<IActionResult> Index()
         {
-            var products = await _db.Products.ToListAsync();
+            var products = await _db.Products
+                .Include(p => p.Category)
+                .ToListAsync();
             return View(products);
         }
 
@@ -40,6 +37,7 @@ namespace GameDrop.Controllers
             }
 
             var products = await _db.Products
+                .Include(p => p.Category)
                 .FirstOrDefaultAsync(m => m.ProductId == id);
 
             if (products == null)
@@ -55,6 +53,7 @@ namespace GameDrop.Controllers
         // GET: Admin/Create
         public IActionResult Create()
         {
+            ViewData["CategoryId"] = new SelectList(_db.Categories, "CategoryId", "CategoryName");
             return View();
         }
 
@@ -63,7 +62,7 @@ namespace GameDrop.Controllers
         // POST: Admin/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage")] GameDrop_Product products)
+        public async Task<IActionResult> Create([Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage,CategoryId,Quantity")] GameDrop_Product products)
         {
             if (ModelState.IsValid)
             {
@@ -80,6 +79,7 @@ namespace GameDrop.Controllers
                 await _db.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CategoryId"] = new SelectList(_db.Categories, "CategoryId", "CategoryName", products.CategoryId);
             return View(products);
         }
 
@@ -98,6 +98,7 @@ namespace GameDrop.Controllers
             {
                 return NotFound();
             }
+            ViewBag.CategoryId = new SelectList(_db.Categories, "CategoryId", "CategoryName", products.CategoryId);
             return View(products);
         }
 
@@ -106,25 +107,33 @@ namespace GameDrop.Controllers
         // POST: Admin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImage")] GameDrop_Product products)
+        public async Task<IActionResult> Edit(int id, [Bind("ProductId,ProductName,ProductDescription,ProductPrice,ProductImageData,ProductImageType,CategoryId,Quantity")] GameDrop_Product products, IFormFile ProductImage)
         {
             if (id != products.ProductId)
             {
                 return NotFound();
             }
 
+            ModelState.Clear();
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    if (products.ProductImage != null && products.ProductImage.Length > 0)
+                    var existingProduct = await _db.Products.AsNoTracking().FirstOrDefaultAsync(p => p.ProductId == id);
+                    if (ProductImage != null && ProductImage.Length > 0)
                     {
                         using (var memoryStream = new MemoryStream())
                         {
-                            products.ProductImage.CopyTo(memoryStream);
+                            ProductImage.CopyTo(memoryStream);
                             products.ProductImageData = memoryStream.ToArray();
-                            products.ProductImageType = products.ProductImage.ContentType;
+                            products.ProductImageType = ProductImage.ContentType;
                         }
+                    }
+                    else
+                    {
+                        products.ProductImageData = existingProduct.ProductImageData;
+                        products.ProductImageType = existingProduct.ProductImageType;
                     }
                     _db.Update(products);
                     await _db.SaveChangesAsync();
@@ -142,6 +151,7 @@ namespace GameDrop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.CategoryId = new SelectList(_db.Categories, "CategoryId", "CategoryName", products.CategoryId);
             return View(products);
         }
 

@@ -18,7 +18,9 @@ namespace GameDrop.Models
         public byte[]? ProductImageData { get; set; }
         public string? ProductImageType { get; set; }
 
+        public int Quantity { get; set; }
         public int CategoryId { get; set; }
+        public GameDrop_Category? Category { get; set; }
 
     }
 }

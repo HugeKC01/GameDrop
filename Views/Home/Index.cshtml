@@ -17,7 +17,7 @@
     var promoBanners = await PromoBannerService.GetPromoBannersAsync();
 }
 
-<div id="promoBannerCarousel" class="carousel slide" data-bs-ride="carousel">
+<div id="promoBannerCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
     <div class="carousel-inner">
         @if (promoBanners != null && promoBanners.Any())
         {
@@ -43,10 +43,6 @@
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
         <span class="visually-hidden">Next</span>
     </button>
-</div>
-
-<div class="acrylic shadow">
-    Acrylic material!
 </div>
 
 <div class="container my-4">

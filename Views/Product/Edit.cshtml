@@ -41,30 +41,38 @@
                             <span asp-validation-for="ProductPrice" class="text-danger"></span>
                         </div>
 
+                        <div class="mb-3">
+                            <label asp-for="CategoryId" class="control-label fw-bold">Category</label>
+                            <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
                         <!-- Product Image Upload -->
                         <div class="mb-3">
                             <label asp-for="ProductImage" class="form-label fw-bold">Upload Image</label>
-                            <input asp-for="ProductImage" class="form-control" type="file" />
+                            <input asp-for="ProductImage" class="form-control" type="file" onchange="previewImage(event)" />
                             <span asp-validation-for="ProductImage" class="text-danger"></span>
                         </div>
 
                         <!-- Current Image Preview -->
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Current Image:</label>
+                            <label class="form-label fw-bold">Preview Image:</label>
                             <div class="d-flex align-items-center mt-2">
                                 @if (Model.ProductImageData != null && Model.ProductImageData.Length > 0)
-                            {
-                                <img src="data:@Model.ProductImageType;base64,@Convert.ToBase64String(Model.ProductImageData)"
-                                     alt="Product Image"
-                                     class="img-thumbnail"
-                                     style="width: 100px; height: 100px;" />
-                            }
-                            else
-                            {
-                                <span class="text-muted">No image available</span>
-                            }
+                                {
+                                    <img id="imagePreview" src="data:@Model.ProductImageType;base64,@Convert.ToBase64String(Model.ProductImageData)"
+                                         alt="Product Image"
+                                         class="img-thumbnail"
+                                         style="width: 100px; height: 100px;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No image available</span>
+                                }
                             </div>
                         </div>
+
+
 
                         <!-- Submit Button -->
                         <div class="d-grid gap-2">
@@ -86,5 +94,20 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        function previewImage(event) {
+            const imagePreview = document.getElementById('imagePreview');
+            const file = event.target.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    imagePreview.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
 }
 
