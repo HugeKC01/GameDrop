@@ -1,0 +1,61 @@
+﻿@model IEnumerable<GameDrop.Models.GameDrop_OrderDetails>
+
+@{
+    ViewData["Title"] = "OrderDetails";
+}
+
+<h1>OrderDetailsIndex</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Product Image
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OrderQuantity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @if (ViewBag.ProductImages != null && ViewBag.ProductImages.ContainsKey(item.ProductId))
+                    {
+                        <img src="@ViewBag.ProductImages[item.ProductId]"
+                             alt="Product Image"
+                             style="max-width: 100px; max-height: 100px;" ;" />
+                    }
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OrderQuantity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Total)฿
+                </td>
+                <td>
+                    <form asp-action="DeleteOrderDetail" asp-controller="Order" method="post" style="display:inline;">
+                        <input type="hidden" name="orderDetailId" value="@item.OrderDetailsId" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<form asp-action="ProceedToPayment" asp-controller="Order" method="post">
+    <input type="hidden" name="orderId" value="@Model.First().OrderId" />
+    <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+</form>

@@ -66,7 +66,5 @@ else if (TempData["ErrorMessage"] != null)
 
 @if (Model.Count > 0)
 {
-    <form asp-controller="ShoppingCart" asp-action="Buy" method="post" style="float: right;">
-        <button type="submit" class="btn btn-outline-success" style="background-color: yellow; color: black;">Buy</button>
-    </form>
+    <a asp-controller="Order" asp-action="OrderDetails" type="submit" class="btn btn-outline-success" style="background-color: yellow; color: black;">Buy</a>
 }

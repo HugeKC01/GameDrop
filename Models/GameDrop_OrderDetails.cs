@@ -9,7 +9,10 @@ namespace GameDrop.Models
         public int OrderDetailsId { get; set; }
         public int OrderId { get; set; }
         public int ProductId { get; set; }
-        public int Quantity { get; set; }
+        [Display(Name = "Product")]
+        public string? OrderProductName { get; set; }
+        [Display(Name = "Quantity")]
+        public int OrderQuantity { get; set; }
         public decimal Total { get; set; }
     }
 }
