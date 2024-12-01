@@ -15,6 +15,14 @@ namespace GameDrop.Services
             _db = db;
         }
 
+        public async Task<List<CartItem>> GetCartItemsByUserIdAsync(string userId)
+        {
+            return await _db.CartItems
+                .Where(ci => ci.UserId == userId)
+                .Include(ci => ci.Product)
+                .ToListAsync();
+        }
+
         public void AddToCart(GameDrop_Product product, int quantity)
         {
             // Get the existing cart item for the product, if it exists
@@ -131,10 +139,10 @@ namespace GameDrop.Services
                 .ToListAsync();
         }
 
-        public async Task AddToCartAsync(GameDrop_Product product, int quantity)
+        public async Task AddToCartAsync(GameDrop_Product product, int quantity, string userId)
         {
             var cartItem = await _db.CartItems
-                .SingleOrDefaultAsync(item => item.Product.ProductId == product.ProductId);
+                .SingleOrDefaultAsync(item => item.Product.ProductId == product.ProductId && item.UserId == userId);
 
             int currentCartQuantity = cartItem?.Quantity ?? 0;
             int totalQuantity = currentCartQuantity + quantity;
@@ -149,7 +157,8 @@ namespace GameDrop.Services
                 cartItem = new CartItem
                 {
                     Product = product,
-                    Quantity = quantity
+                    Quantity = quantity,
+                    UserId = userId
                 };
                 await _db.CartItems.AddAsync(cartItem);
             }
@@ -184,5 +193,6 @@ namespace GameDrop.Services
         public int Id { get; set; }
         public GameDrop_Product Product { get; set; }
         public int Quantity { get; set; }
+        public string UserId { get; set; }
     }
 }

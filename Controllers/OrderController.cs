@@ -7,10 +7,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GameDrop.Services;
+using System.Security.Claims;
 
 namespace GameDrop.Controllers
 {
-    //[Authorize]
     public class OrderController : Controller
     {
         private readonly GameDropDBContext _db;
@@ -37,7 +37,9 @@ namespace GameDrop.Controllers
 
         private async Task AddShoppingCartItemsToOrderDetails(int orderId)
         {
-            var cartItems = await GetShoppingCartItemsAsync();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItems = await _shoppingCartService.GetCartItemsByUserIdAsync(userId);
+
             foreach (var item in cartItems)
             {
                 var orderDetail = new GameDrop_OrderDetails
@@ -68,9 +70,16 @@ namespace GameDrop.Controllers
         }
 
         //GET: Order details view
-        public IActionResult OrderDetails(int id)
+        public async Task<IActionResult> OrderDetails()
         {
-            var cartItems = _shoppingCartService.GetCartItems();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItems = await _shoppingCartService.GetCartItemsByUserIdAsync(userId);
+
+            var userAddresses = await _db.GameDrop_UserAddress
+                .Where(ua => ua.UserId == userId)
+                .ToListAsync();
+
+            ViewBag.UserAddresses = userAddresses;
             return View(cartItems);
         }
 
@@ -94,21 +103,21 @@ namespace GameDrop.Controllers
         // Proceed to payment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProceedToPayment()
+        public async Task<IActionResult> ProceedToPayment(int selectedAddressId)
         {
             var newOrder = new GameDrop_Order
             {
                 OrderDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 OrderStatus = "Payment Pending",
                 PaymentType = "Not Paid",
-                UserAddressId = User?.Identity?.Name
+                UserAddressId = selectedAddressId
             };
 
             _db.Orders.Add(newOrder);
             await _db.SaveChangesAsync();
 
             await AddShoppingCartItemsToOrderDetails(newOrder.OrderId);
-            return RedirectToAction("Payment", new { id = newOrder.OrderId});
+            return RedirectToAction("Payment", new { id = newOrder.OrderId });
         }
 
         public IActionResult Payment(int id)
@@ -121,24 +130,28 @@ namespace GameDrop.Controllers
         // complete payment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CompletePayment(int orderId)
+        public IActionResult CompletePayment(int orderId, string paymentMethod)
         {
             // Implement your payment completion logic here
             // For now, just mark the order as completed and redirect to a confirmation page
 
             var order = _db.Orders.Find(orderId);
+
             if (order == null)
             {
                 return NotFound();
             }
 
-            order.OrderStatus = "Completed";
+            // Update the order status to Paid
+            order.OrderStatus = "Paid";
+            order.PaymentType = paymentMethod;
+
             _db.SaveChanges();
 
-            return RedirectToAction("PaymentConfirmation", new { id = orderId });
+            return RedirectToAction("OrderSummary", new { id = orderId });
         }
 
-        public IActionResult PaymentConfirmation(int id)
+        public IActionResult OrderSummary(int id)
         {
             ViewBag.OrderId = id;
             return View();

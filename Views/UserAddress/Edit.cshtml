@@ -1,0 +1,64 @@
+﻿@model GameDrop.Models.GameDrop_UserAddress
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>GameDrop_UserAddress</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="UserAddressId" />
+            <div class="form-group">
+                <label asp-for="UserAddress" class="control-label"></label>
+                <input asp-for="UserAddress" class="form-control" />
+                <span asp-validation-for="UserAddress" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserCity" class="control-label"></label>
+                <input asp-for="UserCity" class="form-control" />
+                <span asp-validation-for="UserCity" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserState" class="control-label"></label>
+                <input asp-for="UserState" class="form-control" />
+                <span asp-validation-for="UserState" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserZip" class="control-label"></label>
+                <input asp-for="UserZip" class="form-control" />
+                <span asp-validation-for="UserZip" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserCountry" class="control-label"></label>
+                <input asp-for="UserCountry" class="form-control" />
+                <span asp-validation-for="UserCountry" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserPhone" class="control-label"></label>
+                <input asp-for="UserPhone" class="form-control" />
+                <span asp-validation-for="UserPhone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UserEmail" class="control-label"></label>
+                <input asp-for="UserEmail" class="form-control" />
+                <span asp-validation-for="UserEmail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

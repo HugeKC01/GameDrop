@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GameDrop.Services;
+using System.Security.Claims;
 
 namespace GameDrop.Controllers
 {
@@ -12,14 +13,15 @@ namespace GameDrop.Controllers
             _shoppingCartService = shoppingCartService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var cartItems = _shoppingCartService.GetCartItems();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var cartItems = await _shoppingCartService.GetCartItemsByUserIdAsync(userId);
             return View(cartItems);
         }
 
         [HttpPost]
-        public IActionResult AddToCart(int productId, int quantity)
+        public async Task<IActionResult> AddToCart(int productId, int quantity)
         {
             try
             {
@@ -30,7 +32,14 @@ namespace GameDrop.Controllers
                     return RedirectToAction("Shop");
                 }
 
-                _shoppingCartService.AddToCart(product, quantity);
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (userId == null)
+                {
+                    TempData["ErrorMessage"] = "User not found!";
+                    return RedirectToAction("Index");
+                }
+
+                await _shoppingCartService.AddToCartAsync(product, quantity, userId);
 
                 TempData["SuccessMessage"] = "Product added to cart successfully!";
                 return RedirectToAction("Index");

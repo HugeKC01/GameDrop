@@ -10,6 +10,6 @@ namespace GameDrop.Models
         public string? OrderDate { get; set; }
         public string? OrderStatus { get; set; }
         public string? PaymentType { get; set; }
-        public string? UserAddressId { get; set; }
+        public int? UserAddressId { get; set; }
     }
 }

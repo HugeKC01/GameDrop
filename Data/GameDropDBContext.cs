@@ -21,5 +21,6 @@ namespace GameDrop.Data
         public DbSet<GameDrop.Models.GameDrop_Product> Products { get; set; }
         public DbSet<GameDrop.Models.GameDrop_PromoBanner> PromoBanners { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<GameDrop.Models.GameDrop_UserAddress> GameDrop_UserAddress { get; set; } = default!;
     }
 }

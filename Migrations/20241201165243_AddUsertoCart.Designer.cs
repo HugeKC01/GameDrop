@@ -4,6 +4,7 @@ using GameDrop.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameDrop.Migrations
 {
     [DbContext(typeof(GameDropDBContext))]
-    partial class GameDropDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241201165243_AddUsertoCart")]
+    partial class AddUsertoCart
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,8 +91,8 @@ namespace GameDrop.Migrations
                     b.Property<string>("PaymentType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserAddressId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserAddressId")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrderId");
 

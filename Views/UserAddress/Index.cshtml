@@ -1,0 +1,76 @@
+﻿@model IEnumerable<GameDrop.Models.GameDrop_UserAddress>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.UserAddress)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserCity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserState)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserZip)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserCountry)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserPhone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserEmail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.UserId)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserAddress)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserCity)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserState)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserZip)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserCountry)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserPhone)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.UserId)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.UserAddressId">Edit</a> |
+                <a asp-action="Delete" asp-route-id="@item.UserAddressId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
