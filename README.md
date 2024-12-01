@@ -12,11 +12,11 @@ Our final project of CMM349 Web Application Development in King Mongkut’s Univ
 - ❎ Payment System
 - ❎ Coupon System
 - ❎ Shopping Cart
-- ❎ Category System
+- ✅ Category System
 - ✅ Search System
 - ❎ Review System
 - ❎ Rating System
-- ❎ Filter System
+- ✅ Filter System
 - ❎ Receipt System
 - ❎ User Roles
 - ✅ User Registration
@@ -30,7 +30,7 @@ Our final project of CMM349 Web Application Development in King Mongkut’s Univ
 - ❎ Cart Page
 - ❎ Checkout Page
 - ❎ Payment Page
-- ❎ User Profile
+- ✅ User Profile
 <br>...More to be added
 
 <br>
