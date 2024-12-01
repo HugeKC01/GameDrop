@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GameDrop.Controllers
 {
-    [Authorize]
+    //[Authorize]
     public class OrderController : Controller
     {
         private readonly GameDropDBContext _db;
@@ -18,7 +18,7 @@ namespace GameDrop.Controllers
         // GET: Order details from the shop page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Orderdetails(int productId, int quantity)
+        public async Task<IActionResult> BuyNow(int productId, int quantity)
         {
             if (quantity <= 0)
             {
@@ -56,10 +56,11 @@ namespace GameDrop.Controllers
             await _db.SaveChangesAsync();
 
             return RedirectToAction("OrderDetails", new { id = order.OrderId });
+
         }
-        //POST: Order details from the shop page
+        //GET: Order details view
         public IActionResult OrderDetails(int id)
-        {
+        {            
             var orderDetails = _db.OrderDetails
                 .Where(od => od.OrderId == id)
                 .ToList();
@@ -69,7 +70,83 @@ namespace GameDrop.Controllers
                 return NotFound();
             }
 
+            foreach (var detail in orderDetails)
+            {
+                var product = _db.Products.FirstOrDefault(p => p.ProductId == detail.ProductId);
+                if (product != null)
+                {
+                    var base64Image = Convert.ToBase64String(product.ProductImageData);
+                    var imageType = product.ProductImageType;
+                    ViewBag.ProductImages ??= new Dictionary<int, string>();
+                    ViewBag.ProductImages[detail.ProductId] = $"data:{imageType};base64,{base64Image}";
+                }
+            }
+
             return View(orderDetails);
+        }
+        // Delete order details
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteOrderDetail(int orderDetailId)
+        {
+            var orderDetail = await _db.OrderDetails.FindAsync(orderDetailId);
+            if (orderDetail == null)
+            {
+                return NotFound();
+            }
+
+            _db.OrderDetails.Remove(orderDetail);
+            await _db.SaveChangesAsync();
+
+            return RedirectToAction("OrderDetails", new { id = orderDetail.OrderId });
+        }
+
+
+
+
+
+
+
+        // Proceed to payment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ProceedToPayment(int orderId)
+        {
+            // Implement your payment logic here
+            // For now, just redirect to a placeholder payment page
+            return RedirectToAction("Payment", new { id = orderId });
+        }
+
+        public IActionResult Payment(int id)
+        {
+            // Implement your payment view logic here
+            ViewBag.OrderId = id;
+            return View();
+        }
+        // complete payment
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult CompletePayment(int orderId)
+        {
+            // Implement your payment completion logic here
+            // For now, just mark the order as completed and redirect to a confirmation page
+
+            var order = _db.Orders.Find(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            order.OrderStatus = "Completed";
+            _db.SaveChanges();
+
+            return RedirectToAction("PaymentConfirmation", new { id = orderId });
+        }
+
+        public IActionResult PaymentConfirmation(int id)
+        {
+            ViewBag.OrderId = id;
+            return View();
         }
     }
 }

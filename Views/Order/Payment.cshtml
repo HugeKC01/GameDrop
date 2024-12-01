@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Payment";
+}
+
+<h2>Payment</h2>
+
+<p>Proceed with payment for Order ID: @ViewBag.OrderId</p>
+
+<!-- Implement your payment form here -->
+<form asp-action="CompletePayment" asp-controller="Order" method="post">
+    <input type="hidden" name="orderId" value="@ViewBag.OrderId" />
+    <button type="submit" class="btn btn-success">Complete Payment</button>
+</form>

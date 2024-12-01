@@ -186,37 +186,6 @@ namespace GameDrop.Controllers
         {
             return _db.Products.Any(e => e.ProductId == id);
         }
-
-        // GET: BuyNow from the shop page to Order details
-
-        [HttpPost]
-[ValidateAntiForgeryToken]
-public async Task<IActionResult> BuyNow(int productId, int quantity)
-{
-    if (quantity <= 0)
-    {
-        return BadRequest("Quantity must be greater than zero.");
-    }
-
-    var product = await _db.Products.FindAsync(productId);
-    if (product == null)
-    {
-        return NotFound();
-    }
-
-    var orderDetails = new GameDrop_OrderDetails
-    {
-        ProductId = productId,
-        OrderQuantity = quantity,
-        Total = product.ProductPrice * quantity,
-        // Add other necessary properties here
-    };
-
-    _db.OrderDetails.Add(orderDetails);
-    await _db.SaveChangesAsync();
-
-    return RedirectToAction(nameof(Index));
-}
     }
 }
 

@@ -4,19 +4,13 @@
     ViewData["Title"] = "OrderDetails";
 }
 
-<h1>OrderDetails</h1>
+<h1>OrderDetailsIndex</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.OrderId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ProductId)
+                Product Image
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.OrderProductName)
@@ -27,17 +21,19 @@
             <th>
                 @Html.DisplayNameFor(model => model.Total)
             </th>
-            <th></th>
+
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
             <td>
-                @Html.DisplayFor(modelItem => item.OrderId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ProductId)
+                @if (ViewBag.ProductImages != null && ViewBag.ProductImages.ContainsKey(item.ProductId))
+                    {
+                        <img src="@ViewBag.ProductImages[item.ProductId]"
+                             alt="Product Image"
+                             style="max-width: 100px; max-height: 100px;" ;" />
+                    }
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.OrderProductName)
@@ -46,14 +42,20 @@
                 @Html.DisplayFor(modelItem => item.OrderQuantity)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Total)
+                @Html.DisplayFor(modelItem => item.Total)฿
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.OrderDetailsId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.OrderDetailsId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.OrderDetailsId">Delete</a>
+                    <form asp-action="DeleteOrderDetail" asp-controller="Order" method="post" style="display:inline;">
+                        <input type="hidden" name="orderDetailId" value="@item.OrderDetailsId" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+
             </td>
         </tr>
 }
     </tbody>
 </table>
+<form asp-action="ProceedToPayment" asp-controller="Order" method="post">
+    <input type="hidden" name="orderId" value="@Model.First().OrderId" />
+    <button type="submit" class="btn btn-primary">Proceed to Payment</button>
+</form>
