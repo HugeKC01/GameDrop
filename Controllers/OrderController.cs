@@ -94,10 +94,21 @@ namespace GameDrop.Controllers
         // Proceed to payment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ProceedToPayment(int orderId)
+        public async Task<IActionResult> ProceedToPayment()
         {
-            await AddShoppingCartItemsToOrderDetails(orderId);
-            return RedirectToAction("Payment", new { id = orderId });
+            var newOrder = new GameDrop_Order
+            {
+                OrderDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                OrderStatus = "Payment Pending",
+                PaymentType = "Not Paid",
+                UserAddressId = User?.Identity?.Name
+            };
+
+            _db.Orders.Add(newOrder);
+            await _db.SaveChangesAsync();
+
+            await AddShoppingCartItemsToOrderDetails(newOrder.OrderId);
+            return RedirectToAction("Payment", new { id = newOrder.OrderId});
         }
 
         public IActionResult Payment(int id)

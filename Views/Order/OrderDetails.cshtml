@@ -2,6 +2,7 @@
 
 @{
     ViewBag.Title = "Order Details";
+    var userAddresses = ViewBag.UserAddresses as List<string>;
 }
 
 <h2>Shopping Cart</h2>
@@ -23,7 +24,7 @@
                 <td>@item.Product.ProductName</td>
                 <td>@item.Quantity</td>
                 <td>@item.Product.ProductPrice.ToString("C")</td>
-                <td>@(item.Product.ProductPrice * item.Quantity).ToString("C")</td>
+                <td>@(item.Product.ProductPrice * item.Quantity)</td>
                 <td>
                     @if (item.Product.ProductImageData != null)
                     {
@@ -36,6 +37,20 @@
         }
     </tbody>
 </table>
+
 <form asp-action="ProceedToPayment" asp-controller="Order" method="post">
+    <div class="form-group">
+        <label for="UserAddress">Select Address</label>
+        <select id="UserAddress" name="UserAddress" class="form-control">
+            <option value="">Add New Address</option>
+            @if (userAddresses != null)
+            {
+                @foreach (var address in userAddresses)
+                {
+                    <option value="@address">@address</option>
+                }
+            }
+        </select>
+    </div>
     <button type="submit" class="btn btn-primary">Proceed to Payment</button>
 </form>
