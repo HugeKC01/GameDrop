@@ -1,0 +1,54 @@
+﻿@model GameDrop.Models.GameDrop_PromoBanner
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>GameDrop_PromoBanner</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PromoBannerId" />
+            <div class="form-group">
+                <label asp-for="PromoBannerName" class="control-label"></label>
+                <input asp-for="PromoBannerName" class="form-control" />
+                <span asp-validation-for="PromoBannerName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoBannerDescription" class="control-label"></label>
+                <input asp-for="PromoBannerDescription" class="form-control" />
+                <span asp-validation-for="PromoBannerDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoBannerImageData" class="control-label"></label>
+                <input asp-for="PromoBannerImageData" class="form-control" />
+                <span asp-validation-for="PromoBannerImageData" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="PromoBannerImageType" class="control-label"></label>
+                <input asp-for="PromoBannerImageType" class="form-control" />
+                <span asp-validation-for="PromoBannerImageType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="BannerType" class="control-label"></label>
+                <input asp-for="BannerType" class="form-control" />
+                <span asp-validation-for="BannerType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

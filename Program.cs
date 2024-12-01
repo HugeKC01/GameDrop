@@ -18,6 +18,7 @@ builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<GameDropContext>();
 
 builder.Services.AddScoped<CategoryService>();
+builder.Services.AddScoped<PromoBannerService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

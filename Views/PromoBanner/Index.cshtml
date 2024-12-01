@@ -1,0 +1,59 @@
+﻿@model IEnumerable<GameDrop.Models.GameDrop_PromoBanner>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PromoBannerName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PromoBannerDescription)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PromoBannerImageData)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PromoBannerImageType)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BannerType)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.PromoBannerName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PromoBannerDescription)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PromoBannerImageData)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PromoBannerImageType)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BannerType)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PromoBannerId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PromoBannerId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PromoBannerId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
