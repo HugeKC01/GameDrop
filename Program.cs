@@ -21,6 +21,8 @@ builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<PromoBannerService>();
 builder.Services.AddScoped<ShoppingCartService>();
 
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     // Password settings.
@@ -35,6 +37,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
     options.User.RequireUniqueEmail = false;
 });
+
+builder.Services.AddHttpClient();
 
 var app = builder.Build();
 

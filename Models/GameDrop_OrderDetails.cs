@@ -14,5 +14,7 @@ namespace GameDrop.Models
         [Display(Name = "Quantity")]
         public int OrderQuantity { get; set; }
         public decimal Total { get; set; }
+
+        public GameDrop_Product Product { get; set; }
     }
 }

@@ -8,6 +8,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameDrop.Services;
 using System.Security.Claims;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using System.IO;
+using System.Net.Mail;
+using System.Net;
+using Microsoft.Extensions.Options;
 
 namespace GameDrop.Controllers
 {
@@ -15,10 +21,12 @@ namespace GameDrop.Controllers
     {
         private readonly GameDropDBContext _db;
         private readonly ShoppingCartService _shoppingCartService;
-        public OrderController(GameDropDBContext db,ShoppingCartService shoppingCartService)
+        private readonly EmailSettings _emailSettings;
+        public OrderController(GameDropDBContext db, ShoppingCartService shoppingCartService, IOptions<EmailSettings> emailSettings)
         {
             _db = db;
             _shoppingCartService = shoppingCartService;
+            _emailSettings = emailSettings.Value;
         }
         // GET: Order details from the shop page
         [HttpPost]
@@ -151,10 +159,113 @@ namespace GameDrop.Controllers
             return RedirectToAction("OrderSummary", new { id = orderId });
         }
 
-        public IActionResult OrderSummary(int id)
+        public async Task<IActionResult> OrderSummary(int id)
         {
+            var orderDetails = await _db.OrderDetails
+                .Where(od => od.OrderId == id)
+                .Include(od => od.Product) // Assuming you have a navigation property for Product
+                .ToListAsync();
+
+            if (!orderDetails.Any())
+            {
+                return NotFound();
+            }
+
             ViewBag.OrderId = id;
-            return View();
+            return View(orderDetails);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GenerateInvoice(int orderId)
+        {
+            var orderDetails = await _db.OrderDetails
+                .Where(od => od.OrderId == orderId)
+                .Include(od => od.Product)
+                .ToListAsync();
+
+            if (!orderDetails.Any())
+            {
+                return NotFound();
+            }
+
+            var order = await _db.Orders.FindAsync(orderId);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            var memoryStream = new MemoryStream();
+            var document = new Document();
+            var writer = PdfWriter.GetInstance(document, memoryStream);
+            writer.CloseStream = false;
+            document.Open();
+
+            // Add content to the PDF
+            document.Add(new Paragraph("Invoice"));
+            document.Add(new Paragraph($"Order ID: {order.OrderId}"));
+            document.Add(new Paragraph($"Order Date: {order.OrderDate}"));
+            document.Add(new Paragraph($"Order Status: {order.OrderStatus}"));
+            document.Add(new Paragraph(" "));
+
+            var table = new PdfPTable(4);
+            table.AddCell("Product Name");
+            table.AddCell("Quantity");
+            table.AddCell("Price");
+            table.AddCell("Total");
+
+            foreach (var detail in orderDetails)
+            {
+                table.AddCell(detail.OrderProductName);
+                table.AddCell(detail.OrderQuantity.ToString());
+                table.AddCell(detail.Product.ProductPrice.ToString("C"));
+                table.AddCell(detail.Total.ToString("C"));
+            }
+
+            document.Add(table);
+            document.Close();
+
+            memoryStream.Position = 0;
+            return File(memoryStream, "application/pdf", $"Invoice_{order.OrderId}.pdf");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendEmailWithAttachment(GameDrop_Order order, MemoryStream pdfStream, int orderId)
+        {
+            var memoryStream = new MemoryStream();
+            await GenerateInvoice(orderId);
+
+            var email = User.FindFirstValue(ClaimTypes.Email); // Get the email from the user's claims
+            if (string.IsNullOrEmpty(email))
+            {
+                throw new InvalidOperationException("User email not found.");
+            }
+
+            var subject = "Your Invoice for OrderID {order.OrderId}";
+            var body = $"Dear Customer,\n\nPlease find attached the invoice for your order {order.OrderId}.\n\nThank you for your purchase!";
+
+            using (var message = new MailMessage())
+            {
+                message.From = new MailAddress(_emailSettings.FromEmail);
+                message.To.Add(email);
+                message.Subject = subject;
+                message.Body = body;
+
+                // Attach the PDF
+                pdfStream.Position = 0;
+                var attachment = new Attachment(pdfStream, $"Invoice_{order.OrderId}.pdf", "application/pdf");
+                message.Attachments.Add(attachment);
+
+                using (var smtpClient = new SmtpClient(_emailSettings.SmtpServer, _emailSettings.SmtpPort))
+                {
+                    smtpClient.Credentials = new NetworkCredential(_emailSettings.FromEmail, _emailSettings.FromPassword);
+                    smtpClient.EnableSsl = true;
+                    smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                    smtpClient.UseDefaultCredentials = false;
+                    await smtpClient.SendMailAsync(message);
+                }
+            }
+            return RedirectToAction("OrderSummary", new { id = orderId });
         }
     }
 }

@@ -1,5 +1,38 @@
 ﻿@{
     ViewData["Title"] = "OrderSummary";
+    var orderId = ViewBag.OrderId;
 }
 
-<h1>Order Summary</h1>
+@model List<GameDrop.Models.GameDrop_OrderDetails>
+
+<h2>Order Summary</h2>
+<p>Order ID: @ViewBag.OrderId</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.OrderProductName</td>
+                <td>@item.OrderQuantity</td>
+                <td>@item.Total.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<form asp-action="GenerateInvoice" method="get">
+    <input type="hidden" name="orderId" value="@orderId" />
+    <button type="submit">Download Invoice (PDF)</button>
+</form>
+<form asp-action="SendEmailWithAttachment" method="post">
+    <input type="hidden" name="orderId" value="@orderId" />
+    <button type="submit">Send Email with Attachment</button>
+</form>
