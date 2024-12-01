@@ -19,6 +19,7 @@ builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.Requ
 
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<PromoBannerService>();
+builder.Services.AddScoped<ShoppingCartService>();
 
 builder.Services.Configure<IdentityOptions>(options =>
 {

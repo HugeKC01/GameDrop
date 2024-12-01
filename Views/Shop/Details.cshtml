@@ -4,6 +4,19 @@
     ViewData["Title"] = @Html.DisplayFor(Model => Model.ProductName);
 }
 
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
 <div class="container w-100" style="margin-top:1.4em;">
     <div class="d-flex align-items-center mb-3">
         <a href="javascript:history.back()" class="btn me-2" style="margin:0; padding:0; outline:none;">
@@ -40,26 +53,33 @@
                         <br />
                         @Html.DisplayFor(model => model.ProductDescription)
                     </li>
-                </ul>
-                <div class="card-footer" style="margin-bottom:10px;">
                     <li class="list-group-item">
                         <b>Price</b>
                         <br />
                         <h3>฿@Html.DisplayFor(model => model.ProductPrice)</h3>
                     </li>
-                </div>
+                    <li class="list-group-item">
+                        <b>Available Quantity</b><br />
+                        @Model.Quantity
+                    </li>
+                </ul>
             </div>
             <div class="card">
                 <div class="card-body">
-                    <form>
+                    <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
                         <div class="input-group mb-3">
-                            <button class="btn btn-outline-secondary" type="button" id="button-minus" onclick="decrementQuantity()">-</button>
-                            <input type="number" class="form-control" id="quantity" value="1" min="1" />
-                            <button class="btn btn-outline-secondary" type="button" id="button-plus" onclick="incrementQuantity()">+</button>
+                            <input type="number"
+                                   class="form-control"
+                                   id="quantity"
+                                   name="quantity"
+                                   value="1"
+                                   min="1"
+                                   max="@Model.Quantity" />
                         </div>
-                        <a class="btn btn-outline-primary">Buy Now</a>
-                        <a class="btn btn-outline-primary">Add to Cart</a>
+                        <input type="hidden" name="productId" value="@Model.ProductId" />
+                        <button type="submit" class="btn btn-primary">Add to Cart</button>
                     </form>
+                    <a class="btn btn-outline-primary">Buy Now</a>
                 </div>
             </div>
         </div>

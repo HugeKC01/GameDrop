@@ -1,0 +1,72 @@
+﻿@model List<GameDrop.Services.CartItem>
+
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+<h2>Shopping Cart</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success" role="alert">
+        @TempData["SuccessMessage"]
+    </div>
+}
+else if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger" role="alert">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        @if (item.Product.ProductImageData != null && item.Product.ProductImageData.Length > 0)
+                        {
+                            var base64 = Convert.ToBase64String(item.Product.ProductImageData);
+                            var imgSrc = $"data:{item.Product.ProductImageType};base64,{base64}";
+                            <img src="@imgSrc" alt="@item.Product.ProductName" style="width: 50px; height: 50px; margin-right: 10px;" />
+                        }
+                        <span>@item.Product.ProductName</span>
+                    </div>
+                </td>
+                <td>
+                    <form asp-controller="ShoppingCart" asp-action="UpdateCart" method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@item.Product.ProductId" />
+                        <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.Product.Quantity" class="form-control d-inline w-auto" />
+                        <button type="submit" class="btn btn-outline-primary">Update</button>
+                    </form>
+                </td>
+                <td>฿@item.Product.ProductPrice</td>
+                <td>฿@(item.Product.ProductPrice * item.Quantity)</td>
+                <td>
+                    <form asp-controller="ShoppingCart" asp-action="RemoveFromCart" method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@item.Product.ProductId" />
+                        <button type="submit" class="btn btn-outline-danger">Remove</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Count > 0)
+{
+    <form asp-controller="ShoppingCart" asp-action="Buy" method="post" style="float: right;">
+        <button type="submit" class="btn btn-outline-success" style="background-color: yellow; color: black;">Buy</button>
+    </form>
+}

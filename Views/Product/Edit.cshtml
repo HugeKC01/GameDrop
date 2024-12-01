@@ -42,6 +42,12 @@
                         </div>
 
                         <div class="mb-3">
+                            <label asp-for="Quantity" class="form-label fw-bold">Quantity</label>
+                            <input asp-for="Quantity" type="number" class="form-control" />
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
                             <label asp-for="CategoryId" class="control-label fw-bold">Category</label>
                             <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
                             <span asp-validation-for="CategoryId" class="text-danger"></span>

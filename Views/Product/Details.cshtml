@@ -47,9 +47,11 @@
 
                             <!-- Product Price -->
                             <dt class="col-sm-4 fw-bold text-secondary">Price (฿)</dt>
-                            <dd class="col-sm-8 text-success fw-bold">
-                                @Html.DisplayFor(model => model.ProductPrice)
-                            </dd>
+                            <dd class="col-sm-8 text-success fw-bold">@Html.DisplayFor(model => model.ProductPrice)</dd>
+
+                            <!-- Quantity -->
+                            <dt class="col-sm-4 fw-bold text-secondary">Quantity</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Quantity)</dd>
                         </dl>
                     </div>
                 </div>

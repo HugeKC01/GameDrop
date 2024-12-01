@@ -80,12 +80,12 @@
                             </button>
                         </div>
                     </li>
-                    <li class="nav-item dropdown">
-                        <button class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <li class="nav-item">
+                        <a asp-controller="ShoppingCart" asp-action="Index" class="nav-link" role="button">
                             <span class="material-symbols-rounded">
                                 shopping_cart
                             </span>
-                        </button>
+                        </a>
                     </li>
                     <li class="nav-item dropdown">
                         @if (SignInManager.IsSignedIn(User))
