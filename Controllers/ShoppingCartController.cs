@@ -1,107 +1,128 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using GameDrop.Models;
-using GameDrop.Data;
+using GameDrop.Services;
 
 namespace GameDrop.Controllers
 {
     public class ShoppingCartController : Controller
     {
-        private readonly GameDropDBContext _db;
+        private readonly ShoppingCartService _shoppingCartService;
 
-        public ShoppingCartController(GameDropDBContext db)
+        public ShoppingCartController(ShoppingCartService shoppingCartService)
         {
-            _db = db;
+            _shoppingCartService = shoppingCartService;
         }
 
-        // Display shopping cart
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var shoppingCartItems = await _db.ShoppingCarts
-                .Include(c => c.Product)
-                .ToListAsync();
-
-            return View(shoppingCartItems);
+            var cartItems = _shoppingCartService.GetCartItems();
+            return View(cartItems);
         }
 
-        // Add a product to the shopping cart
         [HttpPost]
-        public async Task<IActionResult> AddToCart(int productId)
+        public IActionResult AddToCart(int productId, int quantity)
         {
-            var product = await _db.Products.FindAsync(productId);
+            try
+            {
+                var product = _shoppingCartService.GetProductById(productId);
+                if (product == null)
+                {
+                    TempData["ErrorMessage"] = "Product not found!";
+                    return RedirectToAction("Shop");
+                }
+
+                _shoppingCartService.AddToCart(product, quantity);
+
+                TempData["SuccessMessage"] = "Product added to cart successfully!";
+                return RedirectToAction("Index");
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Details", "Shop", new { id = productId });
+            }
+        }
+
+        [HttpPost]
+        public IActionResult RemoveFromCart(int productId)
+        {
+            try
+            {
+                _shoppingCartService.RemoveFromCart(productId);
+                TempData["SuccessMessage"] = "Product removed from cart successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult UpdateCart(int productId, int quantity)
+        {
+            try
+            {
+                var product = _shoppingCartService.GetProductById(productId);
+                if (product == null)
+                {
+                    TempData["ErrorMessage"] = "Product not found!";
+                    return RedirectToAction("Index");
+                }
+
+                _shoppingCartService.UpdateCart(productId, quantity);
+                TempData["SuccessMessage"] = "Cart updated successfully!";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult Buy()
+        {
+            try
+            {
+                _shoppingCartService.ProcessPurchase();
+                TempData["SuccessMessage"] = "Purchase completed successfully!";
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction("Index");
+        }
+        public IActionResult ProductDetails(int id)
+        {
+            // Fetch the product by ID
+            var product = _shoppingCartService.GetProductById(id);
             if (product == null)
             {
-                return NotFound();
+                return NotFound(); // Return 404 if the product doesn't exist
             }
 
-            var cartItem = await _db.ShoppingCarts
-                .FirstOrDefaultAsync(c => c.ProductId == productId);
+            // Fetch the quantity of the product currently in the cart
+            int cartQuantity = _shoppingCartService.GetCartQuantityForProduct(id);
 
-            if (cartItem == null)
-            {
-                // Add new item to the cart
-                cartItem = new GameDrop_ShoppingCart
-                {
-                    ProductId = productId,
-                    Product = product,
-                    ShoppingCartName = "DefaultCart",
-                };
-                _db.ShoppingCarts.Add(cartItem);
-            }
-            else
-            {
-                // Increase quantity
-                product.Quantity += 1;
-            }
+            // Pass the cart quantity to the view using ViewData
+            ViewData["CartQuantity"] = cartQuantity;
 
-            await _db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            // Return the product details to the view
+            return View(product);
         }
 
-        // Increase product quantity
-        [HttpPost]
-        public async Task<IActionResult> IncreaseQuantity(int cartItemId)
-        {
-            var cartItem = await _db.ShoppingCarts
-                .Include(c => c.Product)
-                .FirstOrDefaultAsync(c => c.ShoppingCartId == cartItemId);
 
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
-
-            cartItem.Product.Quantity += 1;
-
-            await _db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        // Decrease product quantity
-        [HttpPost]
-        public async Task<IActionResult> DecreaseQuantity(int cartItemId)
-        {
-            var cartItem = await _db.ShoppingCarts
-                .Include(c => c.Product)
-                .FirstOrDefaultAsync(c => c.ShoppingCartId == cartItemId);
-
-            if (cartItem == null)
-            {
-                return NotFound();
-            }
-
-            if (cartItem.Product.Quantity > 1)
-            {
-                cartItem.Product.Quantity -= 1;
-            }
-            else
-            {
-                // Optionally, remove the item if quantity drops to 0
-                _db.ShoppingCarts.Remove(cartItem);
-            }
-
-            await _db.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
     }
 }
