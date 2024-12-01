@@ -1,61 +1,41 @@
-﻿@model IEnumerable<GameDrop.Models.GameDrop_OrderDetails>
+﻿@model List<GameDrop.Services.CartItem>
 
 @{
-    ViewData["Title"] = "OrderDetails";
+    ViewBag.Title = "Order Details";
 }
 
-<h1>OrderDetailsIndex</h1>
+<h2>Shopping Cart</h2>
 
 <table class="table">
     <thead>
         <tr>
-            <th>
-                Product Image
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderProductName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OrderQuantity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Total)
-            </th>
-
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+            <th>Image</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
+                <td>@item.Product.ProductName</td>
+                <td>@item.Quantity</td>
+                <td>@item.Product.ProductPrice.ToString("C")</td>
+                <td>@(item.Product.ProductPrice * item.Quantity).ToString("C")</td>
                 <td>
-                    @if (ViewBag.ProductImages != null && ViewBag.ProductImages.ContainsKey(item.ProductId))
+                    @if (item.Product.ProductImageData != null)
                     {
-                        <img src="@ViewBag.ProductImages[item.ProductId]"
-                             alt="Product Image"
-                             style="max-width: 100px; max-height: 100px;" ;" />
+                        var base64Image = Convert.ToBase64String(item.Product.ProductImageData);
+                        var imageType = item.Product.ProductImageType;
+                        <img src="data:@imageType;base64,@base64Image" alt="Product Image" style="width: 100px; height: auto;" />
                     }
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderProductName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.OrderQuantity)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Total)฿
-                </td>
-                <td>
-                    <form asp-action="DeleteOrderDetail" asp-controller="Order" method="post" style="display:inline;">
-                        <input type="hidden" name="orderDetailId" value="@item.OrderDetailsId" />
-                        <button type="submit" class="btn btn-danger">Delete</button>
-                    </form>
                 </td>
             </tr>
         }
     </tbody>
 </table>
 <form asp-action="ProceedToPayment" asp-controller="Order" method="post">
-    <input type="hidden" name="orderId" value="@Model.First().OrderId" />
     <button type="submit" class="btn btn-primary">Proceed to Payment</button>
 </form>

@@ -14,51 +14,43 @@ namespace GameDrop.Controllers
     public class OrderController : Controller
     {
         private readonly GameDropDBContext _db;
-        public OrderController(GameDropDBContext db)
+        private readonly ShoppingCartService _shoppingCartService;
+        public OrderController(GameDropDBContext db,ShoppingCartService shoppingCartService)
         {
             _db = db;
+            _shoppingCartService = shoppingCartService;
         }
         // GET: Order details from the shop page
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> BuyNow(int productId, int quantity)
+
+        public async Task<IActionResult> ShoppingCart()
         {
-            if (quantity <= 0)
+            var cartItems = await GetShoppingCartItemsAsync();
+            if (!cartItems.Any())
             {
-                return BadRequest("Quantity must be greater than zero.");
+                ViewBag.ErrorMessage = "Your shopping cart is empty.";
             }
 
-            var product = await _db.Products.FindAsync(productId);
-            if (product == null)
+            return View(cartItems);
+        }
+
+        private async Task AddShoppingCartItemsToOrderDetails(int orderId)
+        {
+            var cartItems = await GetShoppingCartItemsAsync();
+            foreach (var item in cartItems)
             {
-                return NotFound();
+                var orderDetail = new GameDrop_OrderDetails
+                {
+                    OrderId = orderId,
+                    ProductId = item.Product.ProductId,
+                    OrderProductName = item.Product.ProductName,
+                    OrderQuantity = item.Quantity,
+                    Total = item.Product.ProductPrice * item.Quantity
+                };
+                _db.OrderDetails.Add(orderDetail);
             }
-
-            // Create a new order
-            var order = new GameDrop_Order
-            {
-                OrderDate = DateTime.Now.ToString("yyyy-MM-dd"),
-                OrderStatus = "Pending",
-                // Add other order details as needed
-            };
-
-            _db.Orders.Add(order);
             await _db.SaveChangesAsync();
-
-            // Create order details for the product being bought now
-            var orderDetails = new GameDrop_OrderDetails
-            {
-                OrderId = order.OrderId,
-                ProductId = product.ProductId,
-                OrderProductName = product.ProductName,
-                OrderQuantity = quantity,
-                Total = product.ProductPrice * quantity
-            };
-
-            _db.OrderDetails.Add(orderDetails);
-            await _db.SaveChangesAsync();
-
-            return RedirectToAction("OrderDetails", new { id = order.OrderId });
         }
 
         private async Task<List<CartItem>> GetShoppingCartItemsAsync()
@@ -78,29 +70,10 @@ namespace GameDrop.Controllers
         //GET: Order details view
         public IActionResult OrderDetails(int id)
         {
-            var orderDetails = _db.OrderDetails
-                .Where(od => od.OrderId == id)
-                .ToList();
-
-            if (!orderDetails.Any())
-            {
-                return NotFound();
-            }
-
-            foreach (var detail in orderDetails)
-            {
-                var product = _db.Products.FirstOrDefault(p => p.ProductId == detail.ProductId);
-                if (product != null)
-                {
-                    var base64Image = Convert.ToBase64String(product.ProductImageData);
-                    var imageType = product.ProductImageType;
-                    ViewBag.ProductImages ??= new Dictionary<int, string>();
-                    ViewBag.ProductImages[detail.ProductId] = $"data:{imageType};base64,{base64Image}";
-                }
-            }
-
-            return View(orderDetails);
+            var cartItems = _shoppingCartService.GetCartItems();
+            return View(cartItems);
         }
+
         // Delete order details
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -121,10 +94,9 @@ namespace GameDrop.Controllers
         // Proceed to payment
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ProceedToPayment(int orderId)
+        public async Task<IActionResult> ProceedToPayment(int orderId)
         {
-            // Implement your payment logic here
-            // For now, just redirect to a placeholder payment page
+            await AddShoppingCartItemsToOrderDetails(orderId);
             return RedirectToAction("Payment", new { id = orderId });
         }
 
@@ -133,6 +105,7 @@ namespace GameDrop.Controllers
             // Implement your payment view logic here
             ViewBag.OrderId = id;
             return View();
+
         }
         // complete payment
         [HttpPost]
