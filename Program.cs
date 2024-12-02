@@ -4,6 +4,7 @@ using GameDrop.Data;
 using Microsoft.AspNetCore.Identity;
 using GameDrop.Areas.Identity.Data;
 using GameDrop.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,8 @@ builder.Services.AddDbContext<GameDropContext>(options =>
 
 builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<GameDropContext>();
+    .AddEntityFrameworkStores<GameDropContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<PromoBannerService>();
@@ -60,5 +62,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

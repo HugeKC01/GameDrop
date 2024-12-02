@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GameDrop.Migrations
 {
     [DbContext(typeof(GameDropDBContext))]
-    [Migration("20241202090616_1")]
-    partial class _1
+    [Migration("20241202070657_Finalize1")]
+    partial class Finalize1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

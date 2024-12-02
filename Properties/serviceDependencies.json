@@ -1,13 +1,8 @@
 {
   "dependencies": {
     "mssql1": {
-      "ignored": "true",
       "type": "mssql",
-      "connectionId": "ConnectionStrings:GameDropDBConnectionString"
-    },
-    "mssql2": {
-      "type": "mssql",
-      "connectionId": "ConnectionStrings:GameDropConnectionString"
+      "connectionId": "ConnectionStrings:GameDropContextConnection"
     }
   }
 }
