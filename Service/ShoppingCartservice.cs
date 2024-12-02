@@ -24,7 +24,7 @@ namespace GameDrop.Services
                 .ToListAsync();
         }
 
-        public void AddToCart(GameDrop_Product product, int quantity)
+        public void AddToCart(GameDrop_Product product, int quantity, string userId)
         {
             // Get the existing cart item for the product, if it exists
             var cartItem = _db.CartItems.SingleOrDefault(item => item.Product.ProductId == product.ProductId);
@@ -45,7 +45,8 @@ namespace GameDrop.Services
                 cartItem = new CartItem
                 {
                     Product = product,
-                    Quantity = quantity
+                    Quantity = quantity,
+                    UserId = userId
                 };
                 _db.CartItems.Add(cartItem);
             }
@@ -60,9 +61,9 @@ namespace GameDrop.Services
         }
 
 
-        public void RemoveFromCart(int productId)
+        public void RemoveFromCart(int productId, string userId)
         {
-            var cartItem = _db.CartItems.SingleOrDefault(item => item.Product.ProductId == productId);
+            var cartItem = _db.CartItems.SingleOrDefault(item => item.Product.ProductId == productId && item.UserId == userId);
             if (cartItem != null)
             {
                 _db.CartItems.Remove(cartItem);
@@ -78,7 +79,7 @@ namespace GameDrop.Services
             return new OkResult();
         }
 
-        public void UpdateCart(int productId, int quantity)
+        public void UpdateCart(int productId, int quantity, string userId)
         {
             var product = _db.Products.SingleOrDefault(p => p.ProductId == productId);
             if (product == null)
@@ -91,7 +92,7 @@ namespace GameDrop.Services
                 throw new InvalidOperationException("The requested quantity exceeds the available stock!");
             }
 
-            var cartItem = _db.CartItems.SingleOrDefault(item => item.Product.ProductId == productId);
+            var cartItem = _db.CartItems.SingleOrDefault(item => item.Product.ProductId == productId && item.UserId == userId);
             if (cartItem != null)
             {
                 cartItem.Quantity = quantity;
@@ -115,14 +116,9 @@ namespace GameDrop.Services
             product.Quantity -= quantity;
             _db.SaveChanges();
         }
-        public void ClearCart()
+        public void ProcessPurchase(string userId)
         {
-            _db.CartItems.RemoveRange(_db.CartItems);
-            _db.SaveChanges();
-        }
-        public void ProcessPurchase()
-        {
-            var cartItems = GetCartItems();
+            var cartItems = GetCartItemsByUserId(userId);
             foreach (var item in cartItems)
             {
                 if (item.Quantity > item.Product.Quantity)
@@ -138,7 +134,8 @@ namespace GameDrop.Services
             }
 
             // Clear the cart after purchase
-            ClearCart();
+            _db.CartItems.RemoveRange(_db.CartItems);
+            _db.SaveChanges();
         }
 
         public async Task<List<CartItem>> GetCartItemsAsync()
@@ -179,9 +176,9 @@ namespace GameDrop.Services
             await _db.SaveChangesAsync();
         }
 
-        public List<CartItem> GetCartItems()
+        public List<CartItem> GetCartItemsByUserId(string userId)
         {
-            return _db.CartItems.Include(ci => ci.Product).ToList();
+            return _db.CartItems.Include(ci => ci.Product).Where(ci => ci.UserId == userId).ToList();
         }
 
         public GameDrop_Product GetProductById(int productId) => _db.Products.SingleOrDefault(p => p.ProductId == productId);

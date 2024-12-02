@@ -126,13 +126,17 @@ namespace GameDrop.Controllers
             await _db.SaveChangesAsync();
 
             await AddShoppingCartItemsToOrderDetails(newOrder.OrderId);
-            return RedirectToAction("Payment", new { id = newOrder.OrderId });
+            return RedirectToAction("Payment", new { id = newOrder.OrderId, orderDate = newOrder.OrderDate, orderStatus = newOrder.OrderStatus });
         }
 
-        public IActionResult Payment(int id)
+        public IActionResult Payment(int id, string orderDate, string orderStatus)
         {
             // Implement your payment view logic here
             ViewBag.OrderId = id;
+            ViewBag.OrderDate = orderDate;
+            ViewBag.OrderStatus = orderStatus;
+            ViewBag.TotalAmount = _db.OrderDetails.Where(od => od.OrderId == id).Sum(od => od.Total);
+
             return View();
 
         }

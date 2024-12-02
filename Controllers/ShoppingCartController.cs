@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using GameDrop.Services;
 using System.Security.Claims;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace GameDrop.Controllers
 {
@@ -52,49 +54,22 @@ namespace GameDrop.Controllers
         }
 
         [HttpPost]
-        public IActionResult RemoveFromCart(int productId)
+        public async Task<IActionResult> RemoveFromCart(int productId)
         {
             try
             {
-                _shoppingCartService.RemoveFromCart(productId);
-                TempData["SuccessMessage"] = "Product removed from cart successfully!";
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
-            }
-
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> ClearCart()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
-
-            await _shoppingCartService.ClearCartAsync(userId);
-            TempData["SuccessMessage"] = "Cart cleared successfully!";
-            return RedirectToAction("Index");
-        }
-
-        [HttpPost]
-        public IActionResult UpdateCart(int productId, int quantity)
-        {
-            try
-            {
-                var product = _shoppingCartService.GetProductById(productId);
-                if (product == null)
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var cartItems = await _shoppingCartService.GetCartItemsByUserIdAsync(userId);
+                var cartItem = cartItems.SingleOrDefault(item => item.Product.ProductId == productId);
+                if (cartItem != null)
                 {
-                    TempData["ErrorMessage"] = "Product not found!";
-                    return RedirectToAction("Index");
+                    _shoppingCartService.RemoveFromCart(productId, userId);
+                    TempData["SuccessMessage"] = "Product removed from cart successfully!";
                 }
-
-                _shoppingCartService.UpdateCart(productId, quantity);
-                TempData["SuccessMessage"] = "Cart updated successfully!";
+                else
+                {
+                    TempData["ErrorMessage"] = "Item not found in cart.";
+                }
             }
             catch (InvalidOperationException ex)
             {
@@ -109,11 +84,59 @@ namespace GameDrop.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> UpdateCart(int productId, int quantity)
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var cartItems = await _shoppingCartService.GetCartItemsByUserIdAsync(userId);
+                var cartItem = cartItems.SingleOrDefault(item => item.Product.ProductId == productId);
+                if (cartItem != null)
+                {
+                    _shoppingCartService.UpdateCart(productId, quantity, userId);
+                    TempData["SuccessMessage"] = "Cart updated successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Item not found in cart.";
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ClearCart()
+        {
+            try
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                await _shoppingCartService.ClearCartAsync(userId);
+                TempData["SuccessMessage"] = "Cart cleared successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred: {ex.Message}";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public IActionResult Buy()
         {
             try
             {
-                _shoppingCartService.ProcessPurchase();
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                _shoppingCartService.ProcessPurchase(userId);
                 TempData["SuccessMessage"] = "Purchase completed successfully!";
             }
             catch (InvalidOperationException ex)
