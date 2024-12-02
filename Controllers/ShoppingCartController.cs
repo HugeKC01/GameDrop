@@ -3,9 +3,11 @@ using GameDrop.Services;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameDrop.Controllers
 {
+    [Authorize]
     public class ShoppingCartController : Controller
     {
         private readonly ShoppingCartService _shoppingCartService;

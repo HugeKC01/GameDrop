@@ -116,7 +116,7 @@ namespace GameDrop.Services
             product.Quantity -= quantity;
             _db.SaveChanges();
         }
-        public void ProcessPurchase(string userId)
+        public async Task ProcessPurchase(string userId)
         {
             var cartItems = GetCartItemsByUserId(userId);
             foreach (var item in cartItems)
@@ -134,8 +134,9 @@ namespace GameDrop.Services
             }
 
             // Clear the cart after purchase
-            _db.CartItems.RemoveRange(_db.CartItems);
-            _db.SaveChanges();
+            var userCartItems = _db.CartItems.Where(ci => ci.UserId == userId);
+            _db.CartItems.RemoveRange(userCartItems);
+            await _db.SaveChangesAsync();
         }
 
         public async Task<List<CartItem>> GetCartItemsAsync()

@@ -1,76 +1,60 @@
 ﻿@model IEnumerable<GameDrop.Models.GameDrop_UserAddress>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Address";
 }
 
-<h1>Index</h1>
+<div class="container w-100" style="margin-top:1.4em;">
+    <div class="d-flex align-items-center mb-3">
+        <a href="javascript:history.back()" class="btn me-2" style="margin:0; padding:0; outline:none;" onclick="window.location.reload();">
+            <span class="material-symbols-rounded" style="font-size:1.4em;">
+                arrow_back
+            </span>
+        </a>
+        <a class="btn btn-item-title me-2">
+            <h3 style="font-size:1.4em; margin:0; vertical-align:middle;">Address</h3>
+        </a>
+    </div>
+</div>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">
+        <span class="material-symbols-rounded">
+            add_circle
+        </span> Create New
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserAddress)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserCity)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserState)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserZip)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserCountry)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserPhone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserEmail)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserAddress)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserCity)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserState)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserZip)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserCountry)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserPhone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserEmail)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.UserAddressId">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.UserAddressId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+
+<div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+    @foreach (var item in Model)
+    {
+        <div class="col" style="width:fit-content">
+            <div class="card">
+                <div class="card-body">
+                    <p class="mb-1">@Html.DisplayFor(modelItem => item.UserAddress)</p>
+                    <p class="mb-1">@Html.DisplayFor(modelItem => item.UserCity)</p>
+                    <p class="mb-1">@Html.DisplayFor(modelItem => item.UserState)</p>
+                    <p class="mb-1">@Html.DisplayFor(modelItem => item.UserZip)</p>
+                    <p class="mb-1">@Html.DisplayFor(modelItem => item.UserCountry)</p>
+                    <p class="mb-1">@Html.DisplayFor(modelItem => item.UserPhone)</p>
+                    <p class="mb-1">@Html.DisplayFor(modelItem => item.UserEmail)</p>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <a asp-action="Edit" asp-route-id="@item.UserAddressId" class="btn btn-primary">
+                            <span class="material-symbols-rounded">
+                                edit_note
+                            </span> Edit
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.UserAddressId" class="btn btn-danger">
+                            <span class="material-symbols-rounded">
+                                delete_forever
+                            </span> Delete
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

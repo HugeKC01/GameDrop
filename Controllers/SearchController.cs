@@ -2,6 +2,7 @@
 using GameDrop.Data;
 using System.Linq;
 using GameDrop.Services;
+using iTextSharp.text;
 
 namespace GameDrop.Controllers
 {
@@ -9,6 +10,7 @@ namespace GameDrop.Controllers
     {
         private readonly GameDropDBContext _db;
         private readonly CategoryService _categoryService;
+        private const int PageSize = 10;
 
         public SearchController(GameDropDBContext db, CategoryService categoryService)
         {
@@ -16,7 +18,7 @@ namespace GameDrop.Controllers
             _categoryService = categoryService;
         }
 
-        public IActionResult Index(string SearchItem, string sortOrder, decimal? minPrice, decimal? maxPrice, int? categoryId)
+        public IActionResult Index(string SearchItem, string sortOrder, decimal? minPrice, decimal? maxPrice, int? categoryId, int pageNumber = 1)
         {
             var products = _db.Products.AsQueryable();
 
@@ -72,6 +74,14 @@ namespace GameDrop.Controllers
                 "price_desc" => products.OrderByDescending(p => p.ProductPrice),
                 _ => products.OrderBy(p => p.ProductName),
             };
+
+            var totalItems = products.Count();
+            var totalPages = (int)Math.Ceiling(totalItems / (double)PageSize);
+
+            products = products.Skip((pageNumber - 1) * PageSize).Take(PageSize);
+
+            ViewBag.CurrentPage = pageNumber;
+            ViewBag.TotalPages = totalPages;
 
             return View("Index", products.ToList());
         }

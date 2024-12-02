@@ -113,7 +113,13 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             @if (SignInManager.IsSignedIn(User))
                             {
-                                <li><a asp-controller="Order" asp-action="ManageOrder">ManageOrder</a> </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Order" asp-action="ManageOrder">
+                                        <span class="material-symbols-rounded">
+                                            list_alt
+                                        </span> ManageOrder
+                                    </a>
+                                </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
@@ -187,7 +193,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container text-break">
-            &copy; 2024 - GameDrop - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> / <a asp-area="" asp-controller="Home" asp-action="Credit">Credit</a> / <a asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
+            &copy; 2024 - GameDrop - <a asp-area="" asp-controller="Home" asp-action="Credit">Credit</a> / <a asp-area="" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
         </div>
         
     </footer>

@@ -18,7 +18,7 @@
     <div class="card shadow-sm" style="width: 24rem;">
         <div class="card-body">
             <b><p class="card-title text-center" style="margin:0;">@ViewData["Title"]</p></b>
-            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" enctype="multipart/form-data">
                 <p class="text-center">Create a new account.</p>
                 <hr />
                 <div asp-validation-summary="All" class="text-danger" role="alert"></div>

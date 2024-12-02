@@ -4,6 +4,7 @@ using GameDrop.Data;
 using Microsoft.AspNetCore.Identity;
 using GameDrop.Areas.Identity.Data;
 using GameDrop.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +16,8 @@ builder.Services.AddDbContext<GameDropContext>(options =>
 
 builder.Services.AddDefaultIdentity<GameDropUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<GameDropContext>();
+    .AddEntityFrameworkStores<GameDropContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<CategoryService>();
 builder.Services.AddScoped<PromoBannerService>();
@@ -42,6 +44,37 @@ builder.Services.AddHttpClient();
 
 var app = builder.Build();
 
+//using (var scope = app.Services.CreateScope())
+//{
+//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<GameDropUser>>();
+//    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+//
+//    string[] roleNames = { "Admin", "User", "Manager" };
+//    foreach (var roleName in roleNames)
+//    {
+//        if (!await roleManager.RoleExistsAsync(roleName))
+//        {
+//            await roleManager.CreateAsync(new IdentityRole(roleName));
+//        }
+//    }
+//
+//    var adminUser = await userManager.FindByEmailAsync("email");
+//    if (adminUser != null)
+//    {
+//        await userManager.AddToRoleAsync(adminUser, "Admin");
+//    }
+//}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<GameDropContext>();
+    var userManager = services.GetRequiredService<UserManager<GameDropUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+    context.Database.EnsureCreated();
+    await SeedDatabase(context, userManager, roleManager);
+}
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -64,3 +97,36 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
+
+async Task SeedDatabase(GameDropContext context, UserManager<GameDropUser> userManager, RoleManager<IdentityRole> roleManager)
+{
+    // Initialize default identity roles
+    List<IdentityRole> identityRoles = new List<IdentityRole>
+    {
+        new IdentityRole { Name = RoleTypes.Admin },
+    };
+
+    foreach (var role in identityRoles)
+    {
+        if (!await roleManager.RoleExistsAsync(role.Name))
+        {
+            await roleManager.CreateAsync(role);
+        }
+    }
+
+    // Initialize default user
+    var admin = new GameDropUser
+    {
+        Email = "admin@admin.com",
+        UserName = "Admin"
+    };
+
+    var user = await userManager.FindByEmailAsync(admin.Email);
+    if (user == null)
+    {
+        await userManager.CreateAsync(admin, "1Admin!");
+        await userManager.AddToRoleAsync(admin, RoleTypes.Admin);
+    }
+
+    // Add code to initialize context tables
+}

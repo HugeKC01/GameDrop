@@ -8,13 +8,15 @@
 
 @foreach (var order in Model) {
     <a asp-action="OrderSummary" asp-route-id="@order.OrderId" class="text-decoration-none">
-        <div class="card card-body">
+        <div class="card card-body mb-3">
             <div class="row">
                 <div class="col">
                     <h4>Order ID: @order.OrderId</h4>
                     <p>Order Date: @order.OrderDate</p>
                     <p>Order Status: @order.OrderStatus</p>
-                    <p>Total: ฿@ViewBag.TotalAmount</p>
+                </div>
+                <div class="col-4">
+                    <h4 class="mb-0 text-end">Total: ฿@ViewBag.TotalAmount</h4>
                 </div>
                 <div class="col-2 col-sm-1 justify-content-end">
                     <span class="material-symbols-rounded">
@@ -25,33 +27,3 @@
         </div>
     </a>
 } 
-
-
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Order Date</th>
-            <th>Order Status</th>
-            <th>Payment Type</th>
-            <th>Total</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var order in Model)
-        {
-            <tr>
-                <td>@order.OrderId</td>
-                <td>@order.OrderDate</td>
-                <td>@order.OrderStatus</td>
-                <td>@order.PaymentType</td>
-                <td>฿@ViewBag.TotalAmount</td>
-                <td>
-                    <a asp-action="OrderSummary" asp-route-id="@order.OrderId" class="btn btn-primary">View Details</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>

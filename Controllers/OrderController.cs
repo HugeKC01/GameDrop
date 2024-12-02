@@ -128,6 +128,9 @@ namespace GameDrop.Controllers
             await _db.SaveChangesAsync();
 
             await AddShoppingCartItemsToOrderDetails(newOrder.OrderId);
+
+            await _shoppingCartService.ClearCartAsync(userId);
+
             return RedirectToAction("Payment", new { id = newOrder.OrderId, orderDate = newOrder.OrderDate, orderStatus = newOrder.OrderStatus });
         }
 

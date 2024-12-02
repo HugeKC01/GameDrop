@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using GameDrop.Data;
 using GameDrop.Models;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameDrop.Controllers
 {
+    [Authorize]
     public class UserAddressController : Controller
     {
         private readonly GameDropDBContext _context;

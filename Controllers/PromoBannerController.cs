@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using GameDrop.Data;
 using GameDrop.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GameDrop.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PromoBannerController : Controller
     {
         private readonly GameDropDBContext _context;
