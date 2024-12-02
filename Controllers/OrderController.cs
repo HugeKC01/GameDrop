@@ -114,12 +114,14 @@ namespace GameDrop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ProceedToPayment(int selectedAddressId)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var newOrder = new GameDrop_Order
             {
                 OrderDate = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
                 OrderStatus = "Payment Pending",
                 PaymentType = "Not Paid",
-                UserAddressId = selectedAddressId
+                UserAddressId = selectedAddressId,
+                UserId = userId
             };
 
             _db.Orders.Add(newOrder);
@@ -184,7 +186,26 @@ namespace GameDrop.Controllers
 
             ViewBag.OrderId = id;
             ViewBag.OrderDate = order.OrderDate;
+            ViewBag.OrderStatus = order.OrderStatus;
+            ViewBag.TotalAmount = orderDetails.Sum(od => od.Total);
             return View(orderDetails);
+        }
+
+        public async Task<IActionResult> ManageOrder()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var orders = await _db.Orders
+                .Where(o => o.UserId == userId)
+                .ToListAsync();
+            var orderDetails = await _db.OrderDetails
+                .Where(od => orders.Select(o => o.OrderId).Contains(od.OrderId))
+                .Include(od => od.Product)
+                .ToListAsync();
+
+            ViewBag.TotalOrders = orders.Count;
+            ViewBag.TotalAmount = orderDetails.Sum(od => od.Total);
+
+            return View(orders);
         }
 
         [HttpGet]

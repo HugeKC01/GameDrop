@@ -113,6 +113,8 @@
                         <ul class="dropdown-menu dropdown-menu-end">
                             @if (SignInManager.IsSignedIn(User))
                             {
+                                <li><a asp-controller="Order" asp-action="ManageOrder">ManageOrder</a> </li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li>
                                     <a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">
                                         <span class="material-symbols-rounded">
