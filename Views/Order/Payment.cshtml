@@ -10,29 +10,53 @@
 <form asp-action="CompletePayment" asp-controller="Order" method="post">
     <div class="form-group">
         <label>Select Payment Method</label>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="PaymentMethod" value="CashOnDelivery" id="CashOnDelivery">
-            <label class="form-check-label" for="CashOnDelivery">Cash On Delivery</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" value="CashOnDelivery" id="CashOnDelivery">
+                    <label class="form-check-label" for="CashOnDelivery">Cash On Delivery</label>
+                </div>
+            </div>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="PaymentMethod" value="QRPromptPay" id="QRPromptPay">
-            <label class="form-check-label" for="QRPromptPay">QR PromptPay</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" value="QRPromptPay" id="QRPromptPay">
+                    <label class="form-check-label" for="QRPromptPay">QR PromptPay</label>
+                </div>
+            </div>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="PaymentMethod" value="BankTransfer" id="BankTransfer">
-            <label class="form-check-label" for="BankTransfer">Bank Transfer</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" value="BankTransfer" id="BankTransfer">
+                    <label class="form-check-label" for="BankTransfer">Bank Transfer</label>
+                </div>
+            </div>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="PaymentMethod" value="CreditCard" id="CreditCard">
-            <label class="form-check-label" for="CreditCard">Credit Card / Debit Card</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" value="CreditCard" id="CreditCard">
+                    <label class="form-check-label" for="CreditCard">Credit Card / Debit Card</label>
+                </div>
+            </div>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="PaymentMethod" value="GooglePay" id="GooglePay">
-            <label class="form-check-label" for="GooglePay">Google Wallet</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" value="GooglePay" id="GooglePay">
+                    <label class="form-check-label" for="GooglePay">Google Wallet</label>
+                </div>
+            </div>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="PaymentMethod" value="PayPal" id="PayPal">
-            <label class="form-check-label" for="PayPal">PayPal</label>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="PaymentMethod" value="PayPal" id="PayPal">
+                    <label class="form-check-label" for="PayPal">PayPal</label>
+                </div>
+            </div>
         </div>
     </div>
     <input type="hidden" name="orderId" value="@ViewBag.OrderId" />

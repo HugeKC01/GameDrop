@@ -30,9 +30,9 @@
 
 <form asp-action="GenerateInvoice" method="get">
     <input type="hidden" name="orderId" value="@orderId" />
-    <button type="submit">Download Invoice (PDF)</button>
+    <button class="btn btn-primary" type="submit">Download Invoice (PDF)</button>
 </form>
 <form asp-action="SendEmailWithAttachment" method="post">
     <input type="hidden" name="orderId" value="@orderId" />
-    <button type="submit">Send Email with Attachment</button>
+    <button class="btn btn-primary" type="submit">Send Email</button>
 </form>

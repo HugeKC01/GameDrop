@@ -14,6 +14,7 @@ using System.IO;
 using System.Net.Mail;
 using System.Net;
 using Microsoft.Extensions.Options;
+using Org.BouncyCastle.Asn1.X509;
 
 namespace GameDrop.Controllers
 {
@@ -163,7 +164,7 @@ namespace GameDrop.Controllers
         {
             var orderDetails = await _db.OrderDetails
                 .Where(od => od.OrderId == id)
-                .Include(od => od.Product) // Assuming you have a navigation property for Product
+                .Include(od => od.Product)
                 .ToListAsync();
 
             if (!orderDetails.Any())
@@ -171,7 +172,14 @@ namespace GameDrop.Controllers
                 return NotFound();
             }
 
+            var order = await _db.Orders.FindAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
             ViewBag.OrderId = id;
+            ViewBag.OrderDate = order.OrderDate;
             return View(orderDetails);
         }
 

@@ -19,6 +19,32 @@ else if (TempData["ErrorMessage"] != null)
     </div>
 }
 
+<div class="container-fluid">
+    @foreach (var item in Model) {
+        <div class="card card-body mb-2">
+            <div class="row">
+                <div class="col p-2" style="width:fit-content;">
+                    @if (item.Product.ProductImageData != null && item.Product.ProductImageData.Length > 0)
+                    {
+                        var base64 = Convert.ToBase64String(item.Product.ProductImageData);
+                        var imgSrc = $"data:{item.Product.ProductImageType};base64,{base64}";
+                        <img src="@imgSrc" alt="@item.Product.ProductName" style="aspect-ratio:1/1; max-width: 100px; max-height: 100px; margin-right: 10px;" />
+                    }
+                </div>
+                <div class="col">
+                    <h5>@item.Product.ProductName</h5>
+                    <p>฿@item.Product.ProductPrice</p>
+                    <form asp-controller="ShoppingCart" asp-action="UpdateCart" method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@item.Product.ProductId" />
+                        <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.Product.Quantity" class="form-control d-inline w-auto" />
+                        <button type="submit" class="btn btn-outline-primary">Update</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
 <table class="table">
     <thead>
         <tr>

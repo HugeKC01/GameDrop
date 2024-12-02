@@ -29,6 +29,13 @@ namespace GameDrop.Services
                 .FirstOrDefault(c => c.CategoryId == categoryId);
         }
 
+        public string? GetCategoryNameById(int categoryId)
+        {
+            var category = _context.Categories
+                .FirstOrDefault(c => c.CategoryId == categoryId);
+            return category?.CategoryName;
+        }
+
         public void AddCategory(GameDrop_Category category)
         {
             _context.Categories.Add(category);

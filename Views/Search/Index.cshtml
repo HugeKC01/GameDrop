@@ -1,5 +1,6 @@
 ﻿@using GameDrop.Areas.Identity.Data
 @using Microsoft.AspNetCore.Mvc.Rendering
+@inject GameDrop.Services.CategoryService CategoryService
 
 @model IEnumerable<GameDrop.Models.GameDrop_Product>
 
@@ -39,6 +40,7 @@
                 <div class="col">
                     <label for="categoryId" class="form-label">Category</label>
                     <select class="form-control" id="categoryId" name="categoryId">
+                        <option value="" selected>All Categories</option>
                         @foreach (var category in ViewBag.Categories)
                         {
                             <option value="@category.CategoryId" selected="@(category.CategoryId == ViewBag.SelectedCategoryId ? "selected" : "")">@category.CategoryName</option>
@@ -84,8 +86,8 @@
         @foreach (var item in Model)
         {
             <div class="col" style="width:fit-content">
-                <a asp-action="Details" asp-route-id="@item.ProductId.ToString()" class="text-decoration-none">
-                    <div class="card h-100 shadow-sm" style="width: 12rem;">
+                <div class="card h-100 shadow-sm" style="width: 12rem;">
+                    <a asp-controller="Shop" asp-action="Details" asp-route-id="@item.ProductId.ToString()" class="text-decoration-none">
                         @if (item.ProductImageData != null && item.ProductImageData.Length > 0)
                         {
                             <img src="data:@item.ProductImageType;base64,@Convert.ToBase64String(item.ProductImageData)" alt="Product Image" class="card-img-top" style="object-fit: cover; max-width: 12rem; max-height: 12rem;" />
@@ -96,23 +98,27 @@
                         }
                         <div class="card-body">
                             <h5 class="card-title">@Html.DisplayFor(modelItem => item.ProductName)</h5>
-                            <p class="card-text text-muted">
-                                @Truncate(item.ProductDescription, 100)
-                            </p>
-                        </div>
-
-                        <div class="card-footer d-flex justify-content-between align-items-center">
-                            <span class="fw-bold">
-                                ฿ @Html.DisplayFor(modelItem => item.ProductPrice)
+                            <span class="badge text-bg-primary">
+                                @(CategoryService.GetCategoryNameById(item.CategoryId))
                             </span>
-                            <span class="btn btn-sm btn-primary">
+                        </div>
+                    </a>
+
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <span class="fw-bold">
+                            ฿ @Html.DisplayFor(modelItem => item.ProductPrice)
+                        </span>
+                        <form asp-controller="ShoppingCart" asp-action="AddToCart" method="post">
+                            <input type="hidden" class="form-control" id="quantity" name="quantity" value="1" />
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button type="submit" class="btn btn-sm btn-primary">
                                 <span class="material-symbols-rounded">
                                     shopping_cart
                                 </span>
-                            </span>
-                        </div>
+                            </button>
+                        </form>
                     </div>
-                </a>
+                </div>
             </div>
         }
     </div>
