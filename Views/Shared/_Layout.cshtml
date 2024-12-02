@@ -95,7 +95,7 @@
                                 {
                                     var base64 = Convert.ToBase64String(profileImageData);
                                     var imgSrc = $"data:{profileImageType};base64,{base64}";
-                                    <img src="@imgSrc" alt="Profile Image" class="rounded-circle" style="width: 25px; overflow:hidden;" />
+                                    <img src="@imgSrc" alt="Profile Image" class="rounded-circle" style="width: 25px; height: 25px; object-fit: cover; overflow:hidden;" />
                                 }
                                 else
                                 {

@@ -68,6 +68,20 @@ namespace GameDrop.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> ClearCart()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return Unauthorized();
+            }
+
+            await _shoppingCartService.ClearCartAsync(userId);
+            TempData["SuccessMessage"] = "Cart cleared successfully!";
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
         public IActionResult UpdateCart(int productId, int quantity)
         {
             try

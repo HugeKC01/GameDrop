@@ -4,31 +4,33 @@
     ViewData["Title"] = "Shopping Cart";
 }
 
-<h2>Shopping Cart</h2>
+<div class="container-fluid">
+    <h2>Shopping Cart</h2>
 
-@if (TempData["SuccessMessage"] != null)
-{
-    <div class="alert alert-success" role="alert">
-        @TempData["SuccessMessage"]
-    </div>
-}
-else if (TempData["ErrorMessage"] != null)
-{
-    <div class="alert alert-danger" role="alert">
-        @TempData["ErrorMessage"]
-    </div>
-}
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success" role="alert">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    else if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger" role="alert">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+</div>
 
 <div class="container-fluid">
     @foreach (var item in Model) {
         <div class="card card-body mb-2">
             <div class="row">
-                <div class="col p-2" style="width:fit-content;">
+                <div class="col-1 col-sm-2 col-lg-3 p-2" style="width:fit-content;">
                     @if (item.Product.ProductImageData != null && item.Product.ProductImageData.Length > 0)
                     {
                         var base64 = Convert.ToBase64String(item.Product.ProductImageData);
                         var imgSrc = $"data:{item.Product.ProductImageType};base64,{base64}";
-                        <img src="@imgSrc" alt="@item.Product.ProductName" style="aspect-ratio:1/1; max-width: 100px; max-height: 100px; margin-right: 10px;" />
+                        <img src="@imgSrc" alt="@item.Product.ProductName" style="max-height:100px;" />
                     }
                 </div>
                 <div class="col">
@@ -40,57 +42,75 @@ else if (TempData["ErrorMessage"] != null)
                         <button type="submit" class="btn btn-outline-primary">Update</button>
                     </form>
                 </div>
+                <div class="col-4 col-lg-2">
+                    <h4 class="text-end">฿@(item.Product.ProductPrice * item.Quantity)</h4>
+                </div>
+                <div class="col-2 col-lg-1">
+                    <form asp-controller="ShoppingCart" asp-action="RemoveFromCart" method="post" class="d-inline">
+                        <input type="hidden" name="productId" value="@item.Product.ProductId" />
+                        <button type="submit" class="btn btn-outline-danger">
+                            <span class="material-symbols-rounded">
+                                delete
+                            </span>
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     }
 </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-            <th>Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    <div class="d-flex align-items-center">
-                        @if (item.Product.ProductImageData != null && item.Product.ProductImageData.Length > 0)
-                        {
-                            var base64 = Convert.ToBase64String(item.Product.ProductImageData);
-                            var imgSrc = $"data:{item.Product.ProductImageType};base64,{base64}";
-                            <img src="@imgSrc" alt="@item.Product.ProductName" style="width: 50px; height: 50px; margin-right: 10px;" />
-                        }
-                        <span>@item.Product.ProductName</span>
+<div class="container-fluid mb-3">
+    <div class="card">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col text-end">
+                        <p class="mb-0">Products</p>
                     </div>
-                </td>
-                <td>
-                    <form asp-controller="ShoppingCart" asp-action="UpdateCart" method="post" class="d-inline">
-                        <input type="hidden" name="productId" value="@item.Product.ProductId" />
-                        <input type="number" name="quantity" value="@item.Quantity" min="1" max="@item.Product.Quantity" class="form-control d-inline w-auto" />
-                        <button type="submit" class="btn btn-outline-primary">Update</button>
-                    </form>
-                </td>
-                <td>฿@item.Product.ProductPrice</td>
-                <td>฿@(item.Product.ProductPrice * item.Quantity)</td>
-                <td>
-                    <form asp-controller="ShoppingCart" asp-action="RemoveFromCart" method="post" class="d-inline">
-                        <input type="hidden" name="productId" value="@item.Product.ProductId" />
-                        <button type="submit" class="btn btn-outline-danger">Remove</button>
-                    </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    <div class="col-2 text-start">
+                        <p class="mb-0">฿@(Model.Sum(x => x.Product.ProductPrice * x.Quantity))</p>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col text-end">
+                        <p class="mb-0">Delivery Fee</p>
+                    </div>
+                    <div class="col-2 text-start">
+                        <p class="mb-0">฿0</p>
+                    </div>
+                </div>
+            </li>
+            <li class="list-group-item">
+                <div class="row">
+                    <div class="col text-end">
+                        <h5 class="mb-0">Total</h5>
+                    </div>
+                    <div class="col-2 text-start">
+                        <h4 class="mb-0">฿@(Model.Sum(x => x.Product.ProductPrice * x.Quantity))</h4>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
 
-@if (Model.Count > 0)
-{
-    <a asp-controller="Order" asp-action="OrderDetails" type="submit" class="btn btn-outline-success" style="background-color: yellow; color: black;">Buy</a>
-}
+<div class="container-fluid">
+    @if (Model.Count > 0)
+    {
+        <a asp-controller="Order" asp-action="OrderDetails" type="submit" class="btn btn-outline-success" style="background-color: yellow; color: black;">
+            <span class="material-symbols-rounded">
+                shopping_bag_speed
+            </span> Buy Now
+        </a>
+        <form asp-controller="ShoppingCart" asp-action="ClearCart" method="post" class="d-inline">
+            <button type="submit" class="btn btn-outline-danger">
+                <span class="material-symbols-rounded">
+                    delete_sweep
+                </span> Clear Cart
+            </button>
+        </form>
+    }
+</div>

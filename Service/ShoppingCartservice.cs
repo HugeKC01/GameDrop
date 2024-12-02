@@ -1,5 +1,6 @@
 ﻿using GameDrop.Data;
 using GameDrop.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,14 @@ namespace GameDrop.Services
                 _db.CartItems.Remove(cartItem);
                 _db.SaveChanges();
             }
+        }
+
+        public async Task<IActionResult> ClearCartAsync(string userId)
+        {
+            var cartItems = _db.CartItems.Where(ci => ci.UserId == userId);
+            _db.CartItems.RemoveRange(cartItems);
+            await _db.SaveChangesAsync();
+            return new OkResult();
         }
 
         public void UpdateCart(int productId, int quantity)

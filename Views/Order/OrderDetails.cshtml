@@ -40,40 +40,67 @@
 
 <h2>Order Details</h2>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Price</th>
-            <th>Total</th>
-            <th>Image</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.Product.ProductName</td>
-                <td>@item.Quantity</td>
-                <td>฿@item.Product.ProductPrice</td>
-                <td>฿@(item.Product.ProductPrice * item.Quantity)</td>
-                <td>
-                    @if (item.Product.ProductImageData != null)
-                    {
-                        var base64Image = Convert.ToBase64String(item.Product.ProductImageData);
-                        var imageType = item.Product.ProductImageType;
-                        <img src="data:@imageType;base64,@base64Image" alt="Product Image" style="width: 100px; height: auto;" />
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+@foreach (var item in Model)
+{
+    <div class="card card-body mb-2">
+        <div class="row">
+            <div class="col-1 col-sm-2 col-lg-3 p-2" style="width:fit-content;">
+                @if (item.Product.ProductImageData != null && item.Product.ProductImageData.Length > 0)
+                {
+                    var base64 = Convert.ToBase64String(item.Product.ProductImageData);
+                    var imgSrc = $"data:{item.Product.ProductImageType};base64,{base64}";
+                    <img src="@imgSrc" alt="@item.Product.ProductName" style="max-height:100px;" />
+                }
+            </div>
+            <div class="col">
+                <h5>@item.Product.ProductName</h5>
+                <p>฿@item.Product.ProductPrice</p>
+                <h6>x @item.Quantity</h6>
+            </div>
+            <div class="col-4 col-lg-2">
+                <h4 class="text-end">฿@(item.Product.ProductPrice * item.Quantity)</h4>
+            </div>
+        </div>
+    </div>
+}
+<div class="card mb-3">
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col text-end">
+                    <p class="mb-0">Products</p>
+                </div>
+                <div class="col-2 text-start">
+                    <p class="mb-0">฿@(Model.Sum(x => x.Product.ProductPrice * x.Quantity))</p>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col text-end">
+                    <p class="mb-0">Delivery Fee</p>
+                </div>
+                <div class="col-2 text-start">
+                    <p class="mb-0">฿0</p>
+                </div>
+            </div>
+        </li>
+        <li class="list-group-item">
+            <div class="row">
+                <div class="col text-end">
+                    <h5 class="mb-0">Total</h5>
+                </div>
+                <div class="col-2 text-start">
+                    <h4 class="mb-0">฿@(Model.Sum(x => x.Product.ProductPrice * x.Quantity))</h4>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
 
-<div class="container d-flex flex-column">
-    <form asp-action="ProceedToPayment" asp-controller="Order" method="post">
-        <div class="card card-body">
+<form asp-action="ProceedToPayment" asp-controller="Order" method="post">
+    <div class="card mb-3">
+        <div class="card-body">
             <div class="form-group">
                 <label for="UserAddress">Select Address</label>
                 <select class="form-control mb-3" name="SelectedAddressId">
@@ -87,11 +114,13 @@
                 </select>
             </div>
         </div>
-        <div class="container-fluid mb-3">
+        <div class="card-footer">
             <a class="btn btn-outline-primary" asp-controller="UserAddress" asp-action="Create">Add New Address</a>
         </div>
-        <div class="container-fluid">
-            <button type="submit" class="btn btn-primary">Proceed to Payment</button>
-        </div>
-    </form>
-</div>
+    </div>
+    <button type="submit" class="btn btn-primary">
+        <span class="material-symbols-rounded">
+            payments
+        </span> Proceed to Payment
+    </button>
+</form>

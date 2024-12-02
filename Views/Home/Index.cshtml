@@ -26,7 +26,7 @@
             foreach (var banner in promoBanners)
             {
                 <div class="carousel-item @(isActive ? "active" : "")">
-                    <img src="data:@banner.PromoBannerImageType;base64,@Convert.ToBase64String(banner.PromoBannerImageData)" class="d-block w-100" style="overflow:hidden; aspect-ratio: 21 / 9;" alt="@banner.PromoBannerName">
+                    <img src="data:@banner.PromoBannerImageType;base64,@Convert.ToBase64String(banner.PromoBannerImageData)" class="d-block w-100" style="object-fit: cover; overflow:hidden; aspect-ratio: 21 / 9;" alt="@banner.PromoBannerName">
                     <div class="carousel-caption d-none d-md-block text-start">
                         <h5>@banner.PromoBannerName</h5>
                         <p>@banner.PromoBannerDescription</p>
@@ -80,7 +80,7 @@
                             <input type="hidden" name="productId" value="@item.ProductId" />
                             <button type="submit" class="btn btn-sm btn-primary">
                                 <span class="material-symbols-rounded">
-                                    shopping_cart
+                                    add_shopping_cart
                                 </span>
                             </button>
                         </form>
