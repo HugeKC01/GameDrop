@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace GameDrop.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize]
     public class PromoBannerController : Controller
     {
         private readonly GameDropDBContext _context;
