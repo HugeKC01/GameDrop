@@ -37,5 +37,5 @@ This project will be set to Public after Initial Release on Azure.
 
 ## Team Members:
 [HugeKC01](https://github.com/HugeKC01)✨
-[Eaoi1234](https://github.com/Eaoi1234)
+[Eaoi1234](https://github.com/Eaoi1234)👍
 [WERA-L](https://github.com/WeeRef)👍
