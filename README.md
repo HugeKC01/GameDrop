@@ -36,6 +36,6 @@ This project will be set to Public after Initial Release on Azure.
 [GameDrop](https://gamedrop25671202163026.azurewebsites.net/)
 
 ## Team Members:
-[HugeKC01](https://github.com/HugeKC01)
+[HugeKC01](https://github.com/HugeKC01)✨
 [Eaoi1234](https://github.com/Eaoi1234)
-[WERA-L](https://github.com/WeeRef)
+[WERA-L](https://github.com/WeeRef)👍
