@@ -3,36 +3,39 @@
 Our final project of CMM349 Web Application Development in King Mongkut’s University of Technology Thonburi.
 <br>Create the E-commerce website for Game and Gaming Gadget using Asp.NET core MVC with Bootstrap 5.3
 
-<h1>Features Checklist:</h1>
+## Features Checklist:
 
-<h3>System:</h3>
+### System:
 
 - ✅ Product Database
-- ❎ Order System
-- ❎ Payment System
-- ❎ Coupon System
-- ❎ Shopping Cart
+- ✅ Order System
+- ✅ Shopping Cart
 - ✅ Category System
 - ✅ Search System
-- ❎ Review System
-- ❎ Rating System
 - ✅ Filter System
-- ❎ Receipt System
-- ❎ User Roles
+- ✅ Receipt System
 - ✅ User Registration
 - ✅ User Login
 
-<h3>Pages:</h3>
+### Pages:
 
-- ❎ Home Page
-- ❎ Product Page
-- ❎ Product Detail Page
-- ❎ Cart Page
-- ❎ Checkout Page
-- ❎ Payment Page
+- ✅ Home Page
+- ✅ Product Page
+- ✅ Product Detail Page
+- ✅ Cart Page
+- ✅ Checkout Page
+- ✅ Payment Page
 - ✅ User Profile
-<br>...More to be added
 
 <br>
 <br>
-This project will be set to Public after Initial Release on Azure Cloud.
+This project will be set to Public after Initial Release on Azure.
+<br>
+
+## Website Link:
+[GameDrop](https://gamedrop25671202163026.azurewebsites.net/)
+
+## Team Members:
+[HugeKC01](https://github.com/HugeKC01)
+[Eaoi1234](https://github.com/Eaoi1234)
+[WERA-L](https://github.com/WeeRef)

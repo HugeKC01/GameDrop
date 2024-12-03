@@ -4,19 +4,16 @@ using GameDrop.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GameDrop.Migrations
+namespace GameDrop.Migrations.GameDropDB
 {
     [DbContext(typeof(GameDropDBContext))]
-    [Migration("20241202070657_Finalize1")]
-    partial class Finalize1
+    partial class GameDropDBContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

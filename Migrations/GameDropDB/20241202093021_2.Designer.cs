@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GameDrop.Migrations
+namespace GameDrop.Migrations.GameDropDB
 {
     [DbContext(typeof(GameDropDBContext))]
-    [Migration("20241201165243_AddUsertoCart")]
-    partial class AddUsertoCart
+    [Migration("20241202093021_2")]
+    partial class _2
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -91,7 +91,10 @@ namespace GameDrop.Migrations
                     b.Property<string>("PaymentType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("UserAddressId")
+                    b.Property<int?>("UserAddressId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("OrderId");
@@ -123,6 +126,8 @@ namespace GameDrop.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("OrderDetailsId");
+
+                    b.HasIndex("ProductId");
 
                     b.ToTable("OrderDetails");
                 });
@@ -267,6 +272,17 @@ namespace GameDrop.Migrations
                         .HasForeignKey("ParentCategoryId");
 
                     b.Navigation("ParentCategory");
+                });
+
+            modelBuilder.Entity("GameDrop.Models.GameDrop_OrderDetails", b =>
+                {
+                    b.HasOne("GameDrop.Models.GameDrop_Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("GameDrop.Models.GameDrop_Product", b =>

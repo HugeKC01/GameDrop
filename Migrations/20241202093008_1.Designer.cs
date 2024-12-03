@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace GameDrop.Migrations.GameDrop
+namespace GameDrop.Migrations
 {
     [DbContext(typeof(GameDropContext))]
-    [Migration("20241124150355_GameDropDB")]
-    partial class GameDropDB
+    [Migration("20241202093008_1")]
+    partial class _1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -72,6 +72,12 @@ namespace GameDrop.Migrations.GameDrop
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
+
+                    b.Property<byte[]>("ProfileImageData")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<string>("ProfileImageType")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
